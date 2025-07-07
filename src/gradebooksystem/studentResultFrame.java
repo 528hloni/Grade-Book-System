@@ -16,6 +16,19 @@ public class studentResultFrame extends javax.swing.JFrame {
     public studentResultFrame() {
         initComponents();
     }
+    
+    private void mClearTextFields(){ //This will clear textfields once the values have been captured
+        
+        
+        cbSubjects.setSelectedIndex(0);
+        cbTerm.setSelectedIndex(0);
+        txtTest.setText("");
+        txtExams.setText("");
+        txtWeighs1.setText("");
+        txtWeighs2.setText("");
+       
+        
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -90,6 +103,11 @@ public class studentResultFrame extends javax.swing.JFrame {
         btnDelete.setText("Delete");
 
         btnClear.setText("Clear");
+        btnClear.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnClearActionPerformed(evt);
+            }
+        });
 
         btnReport.setText("View Report");
         btnReport.addActionListener(new java.awt.event.ActionListener() {
@@ -240,6 +258,10 @@ public class studentResultFrame extends javax.swing.JFrame {
        frmMain.setVisible(true);
        this.setVisible(false);
     }//GEN-LAST:event_btnMainMenuActionPerformed
+
+    private void btnClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClearActionPerformed
+        mClearTextFields();
+    }//GEN-LAST:event_btnClearActionPerformed
 
     /**
      * @param args the command line arguments

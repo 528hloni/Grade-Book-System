@@ -4,6 +4,15 @@
  */
 package gradebooksystem;
 
+import java.util.List;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.text.SimpleDateFormat;
+import javax.swing.DefaultListModel;
+import javax.swing.JOptionPane;
+
+
 /**
  *
  * @author hloni
@@ -15,6 +24,94 @@ public class createStudentFrame extends javax.swing.JFrame {
      */
     public createStudentFrame() {
         initComponents();
+    }
+    
+     Boolean boolRecordExists=false; //boolean will be used to check if record exists
+    Integer intIdNumber;
+    String strName;
+    String strSurname;
+    String strDOB;
+    String strGender;
+    String strSubjects;
+    private List<String> selectedSubjects;
+    
+   
+    
+       private void mGetValuesFromGUI(){
+        //values from the user
+         try {
+          intIdNumber = Integer.parseInt(txtID.getText());
+          strName = txtName.getText();
+          strSurname = txtSurname.getText();
+          
+           SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");//format
+        strDOB= sdf1.format(dcDOB.getDate());
+        
+        String gender = "";
+         if (rdoMale.isSelected()) {
+           gender = "Male";
+          } else if (rdoFemale.isSelected()) {
+               gender = "Female";
+}
+        
+         } catch (Exception e) {
+             e.printStackTrace();
+              JOptionPane.showMessageDialog(null, "Enter correct input"+""+e);
+             
+         }
+         
+         lstSubjects.getSelectedValuesList(); // List<String>
+       
+        
+       
+    }
+       
+        private void mLoadListItem() {
+         //Loading items from Event table(event name)
+         
+         String URL5 = "jdbc:mysql://localhost:3306/gradebook_system"; //Connection string to the database
+        String User5 = "root"; //User name to connect to database
+        String Password5 = "528_hloni"; //User password to connect to database
+        java.sql.Connection conMySQLConnectionString; //Declares connection string named conMySQLConnectionString,it will contain the driver for the connection string to the database
+        Statement stStatement = null; //Declares statement named stStatement which will contain sql statement
+        ResultSet rs = null; //Declares statement named rs which will contain quiried data from the table
+         
+        try{
+        conMySQLConnectionString = DriverManager.getConnection(URL5,User5,Password5); //used to gain access to database
+            stStatement = conMySQLConnectionString.createStatement();//This will instruct stStatement to execute SQL statement against the table in database
+            String strQuery = "SELECT subject_name FROM subjects";
+          //  rs = stStatement.executeQuery(strQuery);
+            stStatement.execute(strQuery);
+         rs=stStatement.getResultSet();
+         
+          // Create model and load subject names
+        DefaultListModel<String> model = new DefaultListModel<>();
+
+        while (rs.next()) {
+            model.addElement(rs.getString("subject_name")); //  For JList
+        }
+
+        lstSubjects.setModel(model);  //  Correct for JList
+        
+      
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(this, "Error loading data", "Database Error", JOptionPane.ERROR_MESSAGE);
+    }
+}
+        
+      
+       
+        private void mClearTextFields(){ //This will clear textfields once the values have been captured
+        txtID.setText("");
+        txtName.setText("");
+        txtSurname.setText("");
+        dcDOB.setDate(null);
+        buttonGroup1.clearSelection();
+        lstSubjects.clearSelection();
+       
+        
     }
 
     /**
@@ -39,8 +136,8 @@ public class createStudentFrame extends javax.swing.JFrame {
         txtID = new javax.swing.JTextField();
         txtName = new javax.swing.JTextField();
         txtSurname = new javax.swing.JTextField();
-        jDateChooser1 = new com.toedter.calendar.JDateChooser();
-        btnSave = new javax.swing.JButton();
+        dcDOB = new com.toedter.calendar.JDateChooser();
+        btnCreate = new javax.swing.JButton();
         lblGender = new javax.swing.JLabel();
         rdoMale = new javax.swing.JRadioButton();
         rdoFemale = new javax.swing.JRadioButton();
@@ -48,6 +145,11 @@ public class createStudentFrame extends javax.swing.JFrame {
         btnClear = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowOpened(java.awt.event.WindowEvent evt) {
+                formWindowOpened(evt);
+            }
+        });
 
         lblCreateStudent.setText("Create Student");
 
@@ -61,11 +163,6 @@ public class createStudentFrame extends javax.swing.JFrame {
 
         lblSubjects.setText("Subjects :");
 
-        lstSubjects.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = { "Mathematics", "English", "Physical Sciences", "Life Sciences", "Geography", "Accounting", "Business Studies", "isiZulu", "Life Orientation", "Maths Literacy", "Information Technology", "CAT", "Economics", "Tourism", "History" };
-            public int getSize() { return strings.length; }
-            public String getElementAt(int i) { return strings[i]; }
-        });
         jScrollPane1.setViewportView(lstSubjects);
 
         txtName.addActionListener(new java.awt.event.ActionListener() {
@@ -74,10 +171,10 @@ public class createStudentFrame extends javax.swing.JFrame {
             }
         });
 
-        btnSave.setText("Save");
-        btnSave.addActionListener(new java.awt.event.ActionListener() {
+        btnCreate.setText("Create");
+        btnCreate.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnSaveActionPerformed(evt);
+                btnCreateActionPerformed(evt);
             }
         });
 
@@ -97,6 +194,11 @@ public class createStudentFrame extends javax.swing.JFrame {
         });
 
         btnClear.setText("Clear");
+        btnClear.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnClearActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -129,7 +231,7 @@ public class createStudentFrame extends javax.swing.JFrame {
                                 .addComponent(lblSubjects, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 66, Short.MAX_VALUE))))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(166, 166, 166)
-                        .addComponent(btnSave)
+                        .addComponent(btnCreate)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btnReturn)
                         .addGap(68, 68, 68)))
@@ -138,7 +240,7 @@ public class createStudentFrame extends javax.swing.JFrame {
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGap(75, 75, 75)
-                                .addComponent(jDateChooser1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(dcDOB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGap(21, 21, 21)
                                 .addComponent(rdoMale, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -173,7 +275,7 @@ public class createStudentFrame extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(75, 75, 75)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jDateChooser1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(dcDOB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel5))))
                 .addGap(32, 32, 32)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -191,7 +293,7 @@ public class createStudentFrame extends javax.swing.JFrame {
                             .addComponent(lblSubjects))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 81, Short.MAX_VALUE)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(btnSave)
+                            .addComponent(btnCreate)
                             .addComponent(btnReturn))
                         .addGap(45, 45, 45)
                         .addComponent(btnClear)
@@ -225,19 +327,27 @@ public class createStudentFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtNameActionPerformed
 
-    private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
+    private void btnCreateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCreateActionPerformed
         // add a if clause
         
         mainFrame frmMain = new mainFrame();
        frmMain.setVisible(true);
        this.setVisible(false);
-    }//GEN-LAST:event_btnSaveActionPerformed
+    }//GEN-LAST:event_btnCreateActionPerformed
 
     private void btnReturnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReturnActionPerformed
         mainFrame frmMain = new mainFrame();
        frmMain.setVisible(true);
        this.setVisible(false);
     }//GEN-LAST:event_btnReturnActionPerformed
+
+    private void btnClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClearActionPerformed
+        mClearTextFields();
+    }//GEN-LAST:event_btnClearActionPerformed
+
+    private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
+        mLoadListItem();   //Load items(subjects) from database to jList
+    }//GEN-LAST:event_formWindowOpened
 
     /**
      * @param args the command line arguments
@@ -276,10 +386,10 @@ public class createStudentFrame extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnClear;
+    private javax.swing.JButton btnCreate;
     private javax.swing.JButton btnReturn;
-    private javax.swing.JButton btnSave;
     private javax.swing.ButtonGroup buttonGroup1;
-    private com.toedter.calendar.JDateChooser jDateChooser1;
+    private com.toedter.calendar.JDateChooser dcDOB;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
