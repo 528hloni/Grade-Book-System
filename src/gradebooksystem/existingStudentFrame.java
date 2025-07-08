@@ -32,6 +32,8 @@ public class existingStudentFrame extends javax.swing.JFrame {
         jTable1 = new javax.swing.JTable();
         btnNext = new javax.swing.JButton();
         btnReturn = new javax.swing.JButton();
+        btnEdit = new javax.swing.JButton();
+        btnDelete = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -64,6 +66,10 @@ public class existingStudentFrame extends javax.swing.JFrame {
             }
         });
 
+        btnEdit.setText("Edit");
+
+        btnDelete.setText("jButton2");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -74,13 +80,18 @@ public class existingStudentFrame extends javax.swing.JFrame {
                         .addGap(434, 434, 434)
                         .addComponent(lblExistingStudent, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(144, 144, 144)
-                        .addComponent(btnNext)
-                        .addGap(411, 411, 411)
-                        .addComponent(btnReturn))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(119, 119, 119)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 702, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 702, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(144, 144, 144)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(btnDelete)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(btnNext)
+                                .addGap(173, 173, 173)
+                                .addComponent(btnEdit)))
+                        .addGap(163, 163, 163)
+                        .addComponent(btnReturn)))
                 .addContainerGap(402, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -93,8 +104,11 @@ public class existingStudentFrame extends javax.swing.JFrame {
                 .addGap(32, 32, 32)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnNext)
-                    .addComponent(btnReturn))
-                .addGap(215, 215, 215))
+                    .addComponent(btnReturn)
+                    .addComponent(btnEdit))
+                .addGap(28, 28, 28)
+                .addComponent(btnDelete)
+                .addGap(164, 164, 164))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -161,6 +175,8 @@ public class existingStudentFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnDelete;
+    private javax.swing.JButton btnEdit;
     private javax.swing.JButton btnNext;
     private javax.swing.JButton btnReturn;
     private javax.swing.JPanel jPanel1;
