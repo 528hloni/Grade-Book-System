@@ -54,7 +54,7 @@ public class studentResultFrame extends javax.swing.JFrame {
         txtExams = new javax.swing.JTextField();
         txtWeighs2 = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tblResults = new javax.swing.JTable();
         btnInsert = new javax.swing.JButton();
         btnEdit = new javax.swing.JButton();
         btnDelete = new javax.swing.JButton();
@@ -79,22 +79,20 @@ public class studentResultFrame extends javax.swing.JFrame {
 
         lblWeighs2.setText("Weighs % :");
 
-        cbSubjects.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cbTerm.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4" }));
 
-        cbTerm.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tblResults.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "Subject", "Term 1", "Term 2", "Term 3", "Term 4"
             }
         ));
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(tblResults);
 
         btnInsert.setText("Insert");
 
@@ -310,7 +308,6 @@ public class studentResultFrame extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> cbSubjects;
     private javax.swing.JComboBox<String> cbTerm;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
     private javax.swing.JLabel lblExams;
     private javax.swing.JLabel lblSubject;
     private javax.swing.JLabel lblTerm;
@@ -318,6 +315,7 @@ public class studentResultFrame extends javax.swing.JFrame {
     private javax.swing.JLabel lblWeighs1;
     private javax.swing.JLabel lblWeighs2;
     private javax.swing.JLabel lbllearner;
+    private javax.swing.JTable tblResults;
     private javax.swing.JTextField txtExams;
     private javax.swing.JTextField txtTest;
     private javax.swing.JTextField txtWeighs1;
