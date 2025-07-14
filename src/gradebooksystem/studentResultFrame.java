@@ -4,18 +4,310 @@
  */
 package gradebooksystem;
 
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.Statement;
+import java.util.Vector;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author hloni
  */
 public class studentResultFrame extends javax.swing.JFrame {
 
-    /**
-     * Creates new form studentResultFrame
-     */
-    public studentResultFrame() {
+    private int intStudentId;
+    private String strName;
+    private String strSurname;
+    
+    public studentResultFrame(int intStudentId, String strName, String strSurname) {
         initComponents();
+        this.intStudentId = intStudentId;
+        this.strName = strName;
+        this.strSurname = strSurname;
+        
+        lbllearner.setText( strName + " " + strSurname);
+        
+        
+        
     }
+    
+     Boolean boolRecordExists=false; //boolean will be used to check if record exists
+     String strSubject;
+     int intSubjectId;
+     int intAverageMark;
+     int intTerm;
+     int intTotalTest;
+     int intTotalExam;
+     int intWeighTest;
+     int intWeighExam;
+
+    private studentResultFrame() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+    
+    private void mLoadSubjectsIntoCB() {
+    java.sql.Connection conMySQLConnectionString;    
+    String URL = "jdbc:mysql://localhost:3306/gradebook_system";
+    String User = "root";
+    String Password = "528_hloni"; // 
+    PreparedStatement pst;
+
+    try {
+        conMySQLConnectionString = DriverManager.getConnection(URL, User, Password);
+        
+        String sql = "SELECT sub.subject_name FROM student_subjects ss " +
+                     "JOIN subjects sub ON ss.subject_id = sub.subject_id " +
+                     "WHERE ss.student_id = ?";
+         pst = conMySQLConnectionString.prepareStatement(sql);
+        
+        pst.setInt(1, intStudentId);  // `studentId` passed from the constructor
+        ResultSet rs = pst.executeQuery();
+        
+
+        cbSubjects.removeAllItems(); // clear existing items
+
+        while (rs.next()) {
+            cbSubjects.addItem(rs.getString("subject_name"));
+        }
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(null, "Error loading subjects: " + e.getMessage());
+        
+    }
+}
+    
+    private void mGetValuesFromGui(){
+        
+        try{
+        strSubject = (String) cbSubjects.getSelectedItem();
+        intTerm = (int) cbTerm.getSelectedItem();
+        intTotalTest = Integer.parseInt(txtTest.getText());
+        intWeighTest = Integer.parseInt(txtWeighTest.getText());
+        intWeighExam = Integer.parseInt(txtWeighExam.getText());
+         } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null,"Enter correct input "+""+e);
+        }
+        
+        
+    
+}
+    
+    
+      private void mCheckIfItemsExistInTable(){
+         //Validation to prevent duplication
+         
+        String URL1 = "jdbc:mysql://localhost:3306/gradebook_system"; //Connection string to the database
+        String User1 = "root"; //User name to connect to database
+        String Password1 = "528_hloni"; //User password to connect to database
+        java.sql.Connection conMySQLConnectionString; //Declares connection string named conMySQLConnectionString,it will contain the driver for the connection string to the database
+        Statement stStatement = null; //Declares statement named stStatement which will contain sql statement
+        ResultSet rs = null; //Declares statement named rs which will contain quiried data from the table
+        
+        // try catch contains code to run the query against database table
+        try {
+            conMySQLConnectionString = DriverManager.getConnection(URL1,User1,Password1); //used to gain access to database
+            stStatement = conMySQLConnectionString.createStatement();//This will instruct stStatement to execute SQL statement against the table in database
+           
+            String strQuery = "SELECT * FROM marks WHERE student_id = '" + intStudentId +
+        "' AND subject_id = '" + intSubjectId + 
+        "' AND term = '" + intTerm +
+        "' AND test_total = '" + intTotalTest + 
+        "' AND exam_total = '" + intTotalExam +
+        "' AND test_weight = '" + intWeighTest +  
+        "' AND exam_weight = '" + intWeighExam +          
+        "' AND average_mark = '" + intAverageMark + "'";
+            stStatement.execute(strQuery); // Execute sql statements against the database table
+            rs=stStatement.getResultSet();
+            boolRecordExists=rs.next(); //Confirm if the record exist or not in the database
+            
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e);
+        } finally { //final block has try catch that closes connection of the database
+            try {
+                stStatement.close();
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, "Connection String not closed"+""+e);
+            }
+  
+        }
+    }
+      
+      private void mInsert()
+              //Creating new venues
+    {
+        java.sql.Connection conMySQLConnectionString ; //Declares connection string named conMySQLConnectionString, it will contain the driver for the connection string to the database
+        String URL2 = "jdbc:mysql://localhost:3306/gradebook_system"; //Connection string to the database
+        String User2 = "root"; //User name to connect to database
+        String Password2 = "528_hloni"; //User password to connect to database
+        try {
+            conMySQLConnectionString = DriverManager.getConnection(URL2,User2,Password2); //used to gain access to database
+            Statement myStatement = conMySQLConnectionString.createStatement(); 
+           String sqlinsert = "insert into marks (student_id,subject_id,term,test_total,exam_total,test_weight,exam_weight,average_mark) " + //Initialises the 'insert sql statement' to store the values inserted in the textfield
+            "values ('" + intStudentId + "','"+ intSubjectId + "','" + intTerm + "','" + intTotalTest +"','"+ intTotalExam +"','" + intWeighTest + "','"+intWeighExam +"','" +intAverageMark + "')";
+        
+            myStatement.executeUpdate(sqlinsert); // Execute sql statements against the database table
+            myStatement.close(); //Close connection of the database
+            JOptionPane.showMessageDialog(null,"Complete");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e);
+        
+        }
+        
+    }    
+    
+       private void mTableView(){
+         //Viewing table
+      String URL5 = "jdbc:mysql://localhost:3306/gradebook_system";
+    String User5 = "root";
+    String Password5 = "528_hloni";
+     java.sql.Connection conMySQLConnectionString ;
+
+    try{
+        conMySQLConnectionString = DriverManager.getConnection(URL5,User5,Password5);
+        String sql = """
+            SELECT 
+                sub.subject_name,
+                MAX(CASE WHEN m.term = 1 THEN m.average_mark ELSE NULL END) AS term1,
+                MAX(CASE WHEN m.term = 2 THEN m.average_mark ELSE NULL END) AS term2,
+                MAX(CASE WHEN m.term = 3 THEN m.average_mark ELSE NULL END) AS term3,
+                MAX(CASE WHEN m.term = 4 THEN m.average_mark ELSE NULL END) AS term4
+            FROM marks m
+            JOIN subjects sub ON m.subject_id = sub.subject_id
+            WHERE m.student_id = ?
+            GROUP BY sub.subject_name
+        """;
+
+        PreparedStatement pst = conMySQLConnectionString.prepareStatement(sql);
+        pst.setInt(1, intStudentId);
+        ResultSet rs = pst.executeQuery();
+
+        DefaultTableModel model = (DefaultTableModel) tblResults.getModel();
+        model.setRowCount(0); // Clear table first
+
+        while (rs.next()) {
+            Vector<Object> row = new Vector<>();
+            row.add(rs.getString("subject_name"));
+            row.add(rs.getObject("term1")); // can be NULL if no mark yet
+            row.add(rs.getObject("term2"));
+            row.add(rs.getObject("term3"));
+            row.add(rs.getObject("term4"));
+            model.addRow(row);
+        }
+
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(null, e);
+    }
+}
+       
+         private void mEditUpdate()
+             //  Update/Edit existing venues
+   { 
+    java.sql.Connection conMySQLConnectionString ; //Declares connection string named conMySQLConnectionString, it will contain the driver for the connection string to the database
+        String URL3 = "jdbc:mysql://localhost:3306/gradebook_system"; //Connection string to the database
+        String User3 = "root"; //User name to connect to database
+        String Password3 = "528_hloni"; //User password to connect to database
+        
+        //Get selected row information
+         DefaultTableModel model = (DefaultTableModel) tblResults.getModel();//Get model of table
+      int selectedIndex = tblResults.getSelectedRow();
+      int intMarkId = Integer.parseInt(model.getValueAt(selectedIndex,0).toString());
+        try {
+            conMySQLConnectionString = DriverManager.getConnection(URL3,User3,Password3); //used to gain access to database
+            Statement euStatement = conMySQLConnectionString.createStatement(); 
+            String strQuery = "Update marks Set student_id = '" + intStudentId +
+                  "', subject_id = '" + intSubjectId + 
+                  "', term = '" + intTerm + 
+                  "', test_total = '" + intTotalTest + 
+                  "', exam_total = '" + intTotalExam + 
+                  "', test_weight = '" + intWeighTest + 
+                  "', exam_weight = '" + intWeighExam +
+                  "', average = '" + intAverageMark + 
+                  "' Where mark_id = "+intMarkId;
+            euStatement.executeUpdate(strQuery); // Execute sql statements against the database table
+            euStatement.close(); //Close connection of the database
+            JOptionPane.showMessageDialog(null,"Record Updated");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e);
+           
+        }
+   }
+         
+           private void mDelete()
+            // Delete venue 
+   {
+      java.sql.Connection conMySQLConnectionString ; //Declares connection string named conMySQLConnectionString, it will contain the driver for the connection string to the database
+        String URL3 = "jdbc:mysql://localhost:3306/gradebook_system"; //Connection string to the database
+        String User3 = "root"; //User name to connect to database
+        String Password3 = "528_hloni"; //User password to connect to database
+        
+        //Get selected row information
+         DefaultTableModel model = (DefaultTableModel) tblResults.getModel();//Get model of table
+      int selectedIndex = tblResults.getSelectedRow();
+      int intMarkId = Integer.parseInt(model.getValueAt(selectedIndex,0).toString());
+        try {
+            conMySQLConnectionString = DriverManager.getConnection(URL3,User3,Password3); //used to gain access to database
+            Statement dtStatement = conMySQLConnectionString.createStatement(); 
+            String strQuery =  "DELETE FROM  marks WHERE  mark_id = '"+intMarkId + "'AND student_id = '" +  intStudentId +
+                  "' AND subject_id = '" + intSubjectId + 
+                  "' AND term = '" + intTerm + 
+                  "' AND test_total = '" + intTotalTest + 
+                  "' AND exam_total = '" + intTotalExam + 
+                  "' AND test_weight = '" + intWeighTest + 
+                  "' AND exam_weight = '" + intWeighExam +
+                  "' AND average = '" + intAverageMark + "'" ;       
+            
+            dtStatement.executeUpdate(strQuery); // Execute sql statements against the database table
+            dtStatement.close(); //Close connection of the database
+            JOptionPane.showMessageDialog(null,"Record Deleted");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e);
+           
+        }  
+       
+       
+   }       
+           
+          
+
+           
+           private int mSubjectIdByName(String strSubject) {
+     intSubjectId = -1; // Local variable, initialize with -1
+
+    String URL9 = "jdbc:mysql://localhost:3306/gradebook_system";
+    String User9 = "root";
+    String Password9 = "528_hloni";
+    String sql = "SELECT subject_id FROM subjects WHERE subject_name = ?"; 
+
+    try (
+        java.sql.Connection conMySQLConnectionString = DriverManager.getConnection(URL9, User9, Password9);
+        PreparedStatement pst = conMySQLConnectionString.prepareStatement(sql)
+    ) {
+        pst.setString(1, strSubject);
+        ResultSet rs = pst.executeQuery();
+
+        if (rs.next()) {
+            intSubjectId = rs.getInt("subject_id");
+        } else {
+            JOptionPane.showMessageDialog(null, "Subject '" + strSubject + "' not found in database.");
+        }
+
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(null, e);
+    }
+
+    return intSubjectId;
+}
+   
+    
+    
+    
+    
     
     private void mClearTextFields(){ //This will clear textfields once the values have been captured
         
@@ -24,8 +316,8 @@ public class studentResultFrame extends javax.swing.JFrame {
         cbTerm.setSelectedIndex(0);
         txtTest.setText("");
         txtExams.setText("");
-        txtWeighs1.setText("");
-        txtWeighs2.setText("");
+        txtWeighTest.setText("");
+        txtWeighExam.setText("");
        
         
     }
@@ -50,9 +342,9 @@ public class studentResultFrame extends javax.swing.JFrame {
         cbSubjects = new javax.swing.JComboBox<>();
         cbTerm = new javax.swing.JComboBox<>();
         txtTest = new javax.swing.JTextField();
-        txtWeighs1 = new javax.swing.JTextField();
+        txtWeighTest = new javax.swing.JTextField();
         txtExams = new javax.swing.JTextField();
-        txtWeighs2 = new javax.swing.JTextField();
+        txtWeighExam = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblResults = new javax.swing.JTable();
         btnInsert = new javax.swing.JButton();
@@ -64,6 +356,11 @@ public class studentResultFrame extends javax.swing.JFrame {
         btnMainMenu = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowOpened(java.awt.event.WindowEvent evt) {
+                formWindowOpened(evt);
+            }
+        });
 
         lbllearner.setText("Learner name & surname");
 
@@ -171,8 +468,8 @@ public class studentResultFrame extends javax.swing.JFrame {
                                     .addComponent(lblWeighs1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addGroup(SubjectLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(txtWeighs1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(txtWeighs2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                    .addComponent(txtWeighTest, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(txtWeighExam, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE))))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 24, Short.MAX_VALUE)))
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 500, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -199,13 +496,13 @@ public class studentResultFrame extends javax.swing.JFrame {
                             .addComponent(txtTest, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(lblTest)
                             .addComponent(lblWeighs1)
-                            .addComponent(txtWeighs1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(txtWeighTest, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(52, 52, 52)
                         .addGroup(SubjectLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(lblExams)
                             .addComponent(lblWeighs2)
                             .addComponent(txtExams, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtWeighs2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(txtWeighExam, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(83, 83, 83)
                         .addGroup(SubjectLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(btnInsert)
@@ -260,6 +557,10 @@ public class studentResultFrame extends javax.swing.JFrame {
     private void btnClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClearActionPerformed
         mClearTextFields();
     }//GEN-LAST:event_btnClearActionPerformed
+
+    private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
+        mLoadSubjectsIntoCB();
+    }//GEN-LAST:event_formWindowOpened
 
     /**
      * @param args the command line arguments
@@ -318,7 +619,7 @@ public class studentResultFrame extends javax.swing.JFrame {
     private javax.swing.JTable tblResults;
     private javax.swing.JTextField txtExams;
     private javax.swing.JTextField txtTest;
-    private javax.swing.JTextField txtWeighs1;
-    private javax.swing.JTextField txtWeighs2;
+    private javax.swing.JTextField txtWeighExam;
+    private javax.swing.JTextField txtWeighTest;
     // End of variables declaration//GEN-END:variables
 }

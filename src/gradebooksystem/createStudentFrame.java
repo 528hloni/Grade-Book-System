@@ -142,6 +142,7 @@ public class createStudentFrame extends javax.swing.JFrame {
         "' AND surname = '" + strSurname +
         "' AND gender = '" + strGender + 
         "' AND date_of_birth = '" + strDOB + "'";
+            
             stStatement.execute(strQuery); // Execute sql statements against the database table
             rs=stStatement.getResultSet();
             boolRecordExists=rs.next(); //Confirm if the record exist or not in the database

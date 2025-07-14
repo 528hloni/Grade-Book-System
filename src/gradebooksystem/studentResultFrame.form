@@ -8,6 +8,9 @@
     <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
     <SyntheticProperty name="generateCenter" type="boolean" value="false"/>
   </SyntheticProperties>
+  <Events>
+    <EventHandler event="windowOpened" listener="java.awt.event.WindowListener" parameters="java.awt.event.WindowEvent" handler="formWindowOpened"/>
+  </Events>
   <AuxValues>
     <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
     <AuxValue name="FormSettings_autoSetComponentName" type="java.lang.Boolean" value="false"/>
@@ -91,8 +94,8 @@
                                   </Group>
                                   <EmptySpace min="38" max="32767" attributes="0"/>
                                   <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="txtWeighs1" alignment="1" min="-2" pref="71" max="-2" attributes="0"/>
-                                      <Component id="txtWeighs2" alignment="1" min="-2" pref="71" max="-2" attributes="0"/>
+                                      <Component id="txtWeighTest" alignment="1" min="-2" pref="71" max="-2" attributes="0"/>
+                                      <Component id="txtWeighExam" alignment="1" min="-2" pref="71" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
                           </Group>
@@ -128,14 +131,14 @@
                               <Component id="txtTest" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="lblTest" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="lblWeighs1" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="txtWeighs1" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="txtWeighTest" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace min="-2" pref="52" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
                               <Component id="lblExams" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="lblWeighs2" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="txtExams" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="txtWeighs2" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="txtWeighExam" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace min="-2" pref="83" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
@@ -222,11 +225,11 @@
         </Component>
         <Component class="javax.swing.JTextField" name="txtTest">
         </Component>
-        <Component class="javax.swing.JTextField" name="txtWeighs1">
+        <Component class="javax.swing.JTextField" name="txtWeighTest">
         </Component>
         <Component class="javax.swing.JTextField" name="txtExams">
         </Component>
-        <Component class="javax.swing.JTextField" name="txtWeighs2">
+        <Component class="javax.swing.JTextField" name="txtWeighExam">
         </Component>
         <Container class="javax.swing.JScrollPane" name="jScrollPane1">
           <AuxValues>

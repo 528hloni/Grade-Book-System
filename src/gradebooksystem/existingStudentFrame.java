@@ -431,10 +431,27 @@ public class existingStudentFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnNextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNextActionPerformed
-        // TODO add your handling code here:
-         studentResultFrame frmStudentResult = new studentResultFrame();
+        
+        int selectedIndex = tblStudents.getSelectedRow();
+        if (selectedIndex == -1) {
+            JOptionPane.showMessageDialog(null,"Please select a student");
+        }else {
+            DefaultTableModel model = (DefaultTableModel) tblStudents.getModel();
+            
+            int intStudentId = Integer.parseInt(model.getValueAt(selectedIndex,0).toString());
+            String strName = model.getValueAt(selectedIndex,2).toString();
+            String strSurname = model.getValueAt(selectedIndex, 3).toString();
+            
+             studentResultFrame frmStudentResult = new studentResultFrame(intStudentId, strName,strSurname);
        frmStudentResult.setVisible(true);
        this.setVisible(false);
+        }
+        
+        
+        
+        
+        
+        
     }//GEN-LAST:event_btnNextActionPerformed
 
     private void btnReturnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReturnActionPerformed
