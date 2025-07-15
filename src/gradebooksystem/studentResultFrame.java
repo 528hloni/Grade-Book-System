@@ -85,10 +85,14 @@ public class studentResultFrame extends javax.swing.JFrame {
         
         try{
         strSubject = (String) cbSubjects.getSelectedItem();
-        intTerm = (int) cbTerm.getSelectedItem();
+        intSubjectId = mSubjectIdByName(strSubject);
+        intTerm = Integer.parseInt(cbTerm.getSelectedItem().toString());
         intTotalTest = Integer.parseInt(txtTest.getText());
         intWeighTest = Integer.parseInt(txtWeighTest.getText());
         intWeighExam = Integer.parseInt(txtWeighExam.getText());
+        
+        intAverageMark = ((intTotalTest * intWeighTest) + (intTotalExam * intWeighExam)) / 100;
+        
          } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null,"Enter correct input "+""+e);
@@ -377,6 +381,7 @@ public class studentResultFrame extends javax.swing.JFrame {
         lblWeighs2.setText("Weighs % :");
 
         cbTerm.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4" }));
+        cbTerm.setSelectedIndex(-1);
 
         tblResults.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -392,10 +397,25 @@ public class studentResultFrame extends javax.swing.JFrame {
         jScrollPane1.setViewportView(tblResults);
 
         btnInsert.setText("Insert");
+        btnInsert.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnInsertActionPerformed(evt);
+            }
+        });
 
         btnEdit.setText("Edit");
+        btnEdit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEditActionPerformed(evt);
+            }
+        });
 
         btnDelete.setText("Delete");
+        btnDelete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDeleteActionPerformed(evt);
+            }
+        });
 
         btnClear.setText("Clear");
         btnClear.addActionListener(new java.awt.event.ActionListener() {
@@ -561,6 +581,110 @@ public class studentResultFrame extends javax.swing.JFrame {
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
         mLoadSubjectsIntoCB();
     }//GEN-LAST:event_formWindowOpened
+
+    private void btnInsertActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInsertActionPerformed
+    
+        if (cbSubjects.getSelectedIndex() == -1)
+        {
+            JOptionPane.showMessageDialog(null,"The field cannot be left empty");
+            cbSubjects.requestFocusInWindow();
+        }
+        else if (cbTerm.getSelectedIndex() == -1)
+        {
+            JOptionPane.showMessageDialog(null, "The field cannot be left empty");
+            cbTerm.requestFocusInWindow();
+        }
+        else if (txtTest.getText().equals(""))
+        {
+            JOptionPane.showMessageDialog(null, "The field cannot be left empty");
+            txtTest.requestFocusInWindow();
+        }
+        else if (txtWeighTest.getText().equals(""))
+        {
+            JOptionPane.showMessageDialog(null, "The field cannot be left empty");
+            txtWeighTest.requestFocusInWindow();
+        }
+        else if (txtExams.getText().equals(""))
+        {
+            JOptionPane.showMessageDialog(null, "The field cannot be left empty");
+            txtExams.requestFocusInWindow();
+        }
+        else if (txtWeighExam.getText().equals(""))
+        {
+            JOptionPane.showMessageDialog(null, "The field cannot be left empty");
+            txtWeighExam.requestFocusInWindow();
+        }
+        else
+        {
+            mGetValuesFromGui();
+        mCheckIfItemsExistInTable();
+        
+        //if the record exist then show jOptionPane message then set boolean record to false
+        //if the record doesnt exist then create passeneger,update the table then clear textfields
+        if(boolRecordExists==true)
+        {
+        boolRecordExists=false;
+        JOptionPane.showMessageDialog(null, "Already exists");
+        }
+        else if (boolRecordExists==false)
+        {
+        mInsert();
+        mTableView();
+        mClearTextFields();
+        }    
+             
+        }    
+    }//GEN-LAST:event_btnInsertActionPerformed
+
+    private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
+           int selectedIndex = tblResults.getSelectedRow();
+    if (selectedIndex == -1) { // No row is selected
+        JOptionPane.showMessageDialog(null, "Please select a row to edit.");
+    }else{
+      
+    
+
+        mGetValuesFromGui();
+        mCheckIfItemsExistInTable();
+        //if the record exist then show jOptionPane message then set boolean record to false
+        //if the record doesnt exist then create passeneger,update the table then clear textfields
+        if(boolRecordExists==true)
+        {
+        boolRecordExists=false;
+        JOptionPane.showMessageDialog(null, "Already exists");
+        }
+        else if (boolRecordExists==false)
+        {
+        mEditUpdate();
+        mTableView();
+        mClearTextFields();
+    }
+    }   
+    }//GEN-LAST:event_btnEditActionPerformed
+
+    private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
+        
+            
+         int selectedIndex = tblResults.getSelectedRow();
+    if (selectedIndex == -1) { // No row is selected
+        JOptionPane.showMessageDialog(null, "Please select a row to delete.");
+    }else{
+      
+    //Add confirmation JOptionPane dialog before deleting a record
+ int response = JOptionPane.showConfirmDialog(null, "Are You Sure You Want To DELETE this Marks",
+        "Select An Option",JOptionPane.YES_NO_OPTION,JOptionPane.ERROR_MESSAGE);
+        
+       if (response == JOptionPane.YES_OPTION){
+        mGetValuesFromGui();
+        mDelete();  
+        mTableView();
+        mClearTextFields();
+    }
+       else{
+           JOptionPane.showMessageDialog(null, "Delete Cancelled");
+       }
+    }    
+    }//GEN-LAST:event_btnDeleteActionPerformed
 
     /**
      * @param args the command line arguments
