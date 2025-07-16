@@ -8,6 +8,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Vector;
 import javax.swing.JOptionPane;
@@ -38,7 +39,7 @@ public class studentResultFrame extends javax.swing.JFrame {
      Boolean boolRecordExists=false; //boolean will be used to check if record exists
      String strSubject;
      int intSubjectId;
-     int intAverageMark;
+     double averageMark;
      int intTerm;
      int intTotalTest;
      int intTotalExam;
@@ -91,14 +92,18 @@ public class studentResultFrame extends javax.swing.JFrame {
         intWeighTest = Integer.parseInt(txtWeighTest.getText());
         intWeighExam = Integer.parseInt(txtWeighExam.getText());
         
-        intAverageMark = ((intTotalTest * intWeighTest) + (intTotalExam * intWeighExam)) / 100;
+        
+         averageMark = ((double) intTotalTest / 100) * intWeighTest
+                   + ((double) intTotalExam / 100) * intWeighExam;
+         
+     //   txtAverage.setText("The Average is: "+intAverageMark+"%");
         
          } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null,"Enter correct input "+""+e);
         }
         
-        
+        txtAverage.setText(String.valueOf(averageMark));
     
 }
     
@@ -125,7 +130,7 @@ public class studentResultFrame extends javax.swing.JFrame {
         "' AND exam_total = '" + intTotalExam +
         "' AND test_weight = '" + intWeighTest +  
         "' AND exam_weight = '" + intWeighExam +          
-        "' AND average_mark = '" + intAverageMark + "'";
+        "' AND average_mark = '" + averageMark + "'";
             stStatement.execute(strQuery); // Execute sql statements against the database table
             rs=stStatement.getResultSet();
             boolRecordExists=rs.next(); //Confirm if the record exist or not in the database
@@ -153,7 +158,7 @@ public class studentResultFrame extends javax.swing.JFrame {
             conMySQLConnectionString = DriverManager.getConnection(URL2,User2,Password2); //used to gain access to database
             Statement myStatement = conMySQLConnectionString.createStatement(); 
            String sqlinsert = "insert into marks (student_id,subject_id,term,test_total,exam_total,test_weight,exam_weight,average_mark) " + //Initialises the 'insert sql statement' to store the values inserted in the textfield
-            "values ('" + intStudentId + "','"+ intSubjectId + "','" + intTerm + "','" + intTotalTest +"','"+ intTotalExam +"','" + intWeighTest + "','"+intWeighExam +"','" +intAverageMark + "')";
+            "values ('" + intStudentId + "','"+ intSubjectId + "','" + intTerm + "','" + intTotalTest +"','"+ intTotalExam +"','" + intWeighTest + "','"+intWeighExam +"','" +averageMark + "')";
         
             myStatement.executeUpdate(sqlinsert); // Execute sql statements against the database table
             myStatement.close(); //Close connection of the database
@@ -216,7 +221,7 @@ public class studentResultFrame extends javax.swing.JFrame {
         String URL3 = "jdbc:mysql://localhost:3306/gradebook_system"; //Connection string to the database
         String User3 = "root"; //User name to connect to database
         String Password3 = "528_hloni"; //User password to connect to database
-        
+     
         //Get selected row information
          DefaultTableModel model = (DefaultTableModel) tblResults.getModel();//Get model of table
       int selectedIndex = tblResults.getSelectedRow();
@@ -231,14 +236,14 @@ public class studentResultFrame extends javax.swing.JFrame {
                   "', exam_total = '" + intTotalExam + 
                   "', test_weight = '" + intWeighTest + 
                   "', exam_weight = '" + intWeighExam +
-                  "', average = '" + intAverageMark + 
+                  "', average = '" + averageMark + 
                   "' Where mark_id = "+intMarkId;
             euStatement.executeUpdate(strQuery); // Execute sql statements against the database table
             euStatement.close(); //Close connection of the database
             JOptionPane.showMessageDialog(null,"Record Updated");
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, e);
-           
+         
         }
    }
          
@@ -264,7 +269,7 @@ public class studentResultFrame extends javax.swing.JFrame {
                   "' AND exam_total = '" + intTotalExam + 
                   "' AND test_weight = '" + intWeighTest + 
                   "' AND exam_weight = '" + intWeighExam +
-                  "' AND average = '" + intAverageMark + "'" ;       
+                  "' AND average = '" + averageMark + "'" ;       
             
             dtStatement.executeUpdate(strQuery); // Execute sql statements against the database table
             dtStatement.close(); //Close connection of the database
@@ -322,6 +327,7 @@ public class studentResultFrame extends javax.swing.JFrame {
         txtExams.setText("");
         txtWeighTest.setText("");
         txtWeighExam.setText("");
+        txtAverage.setText("");
        
         
     }
@@ -358,6 +364,8 @@ public class studentResultFrame extends javax.swing.JFrame {
         btnReport = new javax.swing.JButton();
         btnReturn = new javax.swing.JButton();
         btnMainMenu = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        txtAverage = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -394,6 +402,11 @@ public class studentResultFrame extends javax.swing.JFrame {
                 "Subject", "Term 1", "Term 2", "Term 3", "Term 4"
             }
         ));
+        tblResults.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblResultsMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(tblResults);
 
         btnInsert.setText("Insert");
@@ -445,6 +458,10 @@ public class studentResultFrame extends javax.swing.JFrame {
             }
         });
 
+        txtAverage.setColumns(20);
+        txtAverage.setRows(5);
+        jScrollPane2.setViewportView(txtAverage);
+
         javax.swing.GroupLayout SubjectLayout = new javax.swing.GroupLayout(Subject);
         Subject.setLayout(SubjectLayout);
         SubjectLayout.setHorizontalGroup(
@@ -472,24 +489,29 @@ public class studentResultFrame extends javax.swing.JFrame {
                             .addComponent(lblExams, javax.swing.GroupLayout.DEFAULT_SIZE, 85, Short.MAX_VALUE)
                             .addComponent(lblTest, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(34, 34, 34)
-                        .addGroup(SubjectLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(txtTest, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(cbSubjects, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtExams, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(103, 103, 103)
-                        .addGroup(SubjectLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, SubjectLayout.createSequentialGroup()
-                                .addComponent(lblTerm, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(54, 54, 54)
-                                .addComponent(cbTerm, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(SubjectLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(SubjectLayout.createSequentialGroup()
-                                .addGroup(SubjectLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                    .addComponent(lblWeighs2, javax.swing.GroupLayout.DEFAULT_SIZE, 70, Short.MAX_VALUE)
-                                    .addComponent(lblWeighs1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addGroup(SubjectLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(txtWeighTest, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(txtWeighExam, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                .addGroup(SubjectLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(txtTest, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(cbSubjects, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(txtExams, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(103, 103, 103)
+                                .addGroup(SubjectLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, SubjectLayout.createSequentialGroup()
+                                        .addComponent(lblTerm, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(54, 54, 54)
+                                        .addComponent(cbTerm, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(SubjectLayout.createSequentialGroup()
+                                        .addGroup(SubjectLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                            .addComponent(lblWeighs2, javax.swing.GroupLayout.DEFAULT_SIZE, 70, Short.MAX_VALUE)
+                                            .addComponent(lblWeighs1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addGroup(SubjectLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(txtWeighTest, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(txtWeighExam, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                            .addGroup(SubjectLayout.createSequentialGroup()
+                                .addGap(1, 1, 1)
+                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 24, Short.MAX_VALUE)))
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 500, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -505,6 +527,9 @@ public class studentResultFrame extends javax.swing.JFrame {
                 .addComponent(lbllearner, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(52, 52, 52)
                 .addGroup(SubjectLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(SubjectLayout.createSequentialGroup()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(SubjectLayout.createSequentialGroup()
                         .addGroup(SubjectLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(lblSubject)
@@ -523,20 +548,21 @@ public class studentResultFrame extends javax.swing.JFrame {
                             .addComponent(lblWeighs2)
                             .addComponent(txtExams, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(txtWeighExam, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(83, 83, 83)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
                         .addGroup(SubjectLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(btnInsert)
                             .addComponent(btnEdit)
                             .addComponent(btnDelete))
-                        .addGap(59, 59, 59)
+                        .addGap(60, 60, 60)
                         .addGroup(SubjectLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(btnClear)
                             .addComponent(btnReport)
-                            .addComponent(btnReturn))
-                        .addGap(42, 42, 42)
-                        .addComponent(btnMainMenu))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(117, Short.MAX_VALUE))
+                            .addComponent(btnReturn)
+                            .addComponent(btnClear))
+                        .addGap(46, 46, 46)))
+                .addComponent(btnMainMenu)
+                .addGap(89, 89, 89))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -580,6 +606,7 @@ public class studentResultFrame extends javax.swing.JFrame {
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
         mLoadSubjectsIntoCB();
+        mTableView();
     }//GEN-LAST:event_formWindowOpened
 
     private void btnInsertActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInsertActionPerformed
@@ -636,32 +663,6 @@ public class studentResultFrame extends javax.swing.JFrame {
         }    
     }//GEN-LAST:event_btnInsertActionPerformed
 
-    private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
-           int selectedIndex = tblResults.getSelectedRow();
-    if (selectedIndex == -1) { // No row is selected
-        JOptionPane.showMessageDialog(null, "Please select a row to edit.");
-    }else{
-      
-    
-
-        mGetValuesFromGui();
-        mCheckIfItemsExistInTable();
-        //if the record exist then show jOptionPane message then set boolean record to false
-        //if the record doesnt exist then create passeneger,update the table then clear textfields
-        if(boolRecordExists==true)
-        {
-        boolRecordExists=false;
-        JOptionPane.showMessageDialog(null, "Already exists");
-        }
-        else if (boolRecordExists==false)
-        {
-        mEditUpdate();
-        mTableView();
-        mClearTextFields();
-    }
-    }   
-    }//GEN-LAST:event_btnEditActionPerformed
-
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
         
             
@@ -685,6 +686,97 @@ public class studentResultFrame extends javax.swing.JFrame {
        }
     }    
     }//GEN-LAST:event_btnDeleteActionPerformed
+
+    private void tblResultsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblResultsMouseClicked
+             //selected row from table will appear on textfields 
+    
+             
+              int selectedRow = tblResults.getSelectedRow();
+    int selectedColumn = tblResults.getSelectedColumn();
+
+    if (selectedRow == -1 || selectedColumn == -1) return;
+
+    // Get subject name from first column (column 0)
+    String subjectName = tblResults.getValueAt(selectedRow, 0).toString();
+
+    // Get term number from column index
+    int term = selectedColumn; // term2 = column 2 ⇒ term = 2, etc.
+    
+    if (term < 1 || term > 4) return; // Prevent clicking on the subject column (index 0)
+
+    // Set combo boxes
+    cbSubjects.setSelectedItem(subjectName);
+    cbTerm.setSelectedItem(String.valueOf(term));
+    
+    
+     String URL4 = "jdbc:mysql://localhost:3306/gradebook_system";
+    String User4 = "root";
+    String Password4 = "528_hloni"; // 
+    PreparedStatement pst;
+    java.sql.Connection conMySQLConnectionString ;
+
+    
+        
+
+    // Now fetch from DB
+    try {
+       conMySQLConnectionString = DriverManager.getConnection(URL4, User4, Password4);
+    String sql2 =  "SELECT test_total, test_weight, exam_total, exam_weight, average_mark FROM marks " +
+        "WHERE subject_Id = ? AND term = ? AND student_Id = ?";
+    pst = conMySQLConnectionString.prepareStatement(sql2);
+        
+  //  int intSubjectId = mSubjectIdByName(subjectName);
+        pst.setInt(1, intSubjectId);
+        pst.setInt(2, term);
+        pst.setInt(3, intStudentId); // Replace with actual variable for selected student
+        
+        ResultSet rs = pst.executeQuery();
+
+        if (rs.next()) {
+            txtTest.setText(rs.getString("test_total"));
+            txtWeighTest.setText(rs.getString("test_weight"));
+            txtExams.setText(rs.getString("exam_total"));
+            txtWeighExam.setText(rs.getString("exam_weight"));
+            txtAverage.setText(rs.getString("average_mark"));
+        } else {
+            // If no data found, clear fields
+            txtTest.setText("");
+            txtWeighTest.setText("");
+            txtExams.setText("");
+            txtWeighExam.setText("");
+            txtAverage.setText("");
+        }
+
+    } catch (SQLException e) {
+        JOptionPane.showMessageDialog(this, "Error loading mark data: " + e.getMessage());
+    }
+
+    
+    }//GEN-LAST:event_tblResultsMouseClicked
+
+    private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
+        int selectedIndex = tblResults.getSelectedRow();
+        if (selectedIndex == -1) { // No row is selected
+            JOptionPane.showMessageDialog(null, "Please select a row to edit.");
+        }else{
+
+            mGetValuesFromGui();
+            mCheckIfItemsExistInTable();
+            //if the record exist then show jOptionPane message then set boolean record to false
+            //if the record doesnt exist then create passeneger,update the table then clear textfields
+            if(boolRecordExists==true)
+            {
+                boolRecordExists=false;
+                JOptionPane.showMessageDialog(null, "Already exists");
+            }
+            else if (boolRecordExists==false)
+            {
+                mEditUpdate();
+                mTableView();
+                mClearTextFields();
+            }
+        }
+    }//GEN-LAST:event_btnEditActionPerformed
 
     /**
      * @param args the command line arguments
@@ -733,6 +825,7 @@ public class studentResultFrame extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> cbSubjects;
     private javax.swing.JComboBox<String> cbTerm;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JLabel lblExams;
     private javax.swing.JLabel lblSubject;
     private javax.swing.JLabel lblTerm;
@@ -741,6 +834,7 @@ public class studentResultFrame extends javax.swing.JFrame {
     private javax.swing.JLabel lblWeighs2;
     private javax.swing.JLabel lbllearner;
     private javax.swing.JTable tblResults;
+    private javax.swing.JTextArea txtAverage;
     private javax.swing.JTextField txtExams;
     private javax.swing.JTextField txtTest;
     private javax.swing.JTextField txtWeighExam;
