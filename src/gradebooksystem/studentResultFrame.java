@@ -41,10 +41,10 @@ public class studentResultFrame extends javax.swing.JFrame {
      int intSubjectId;
      double averageMark;
      int intTerm;
-     int intTotalTest;
-     int intTotalExam;
-     int intWeighTest;
-     int intWeighExam;
+     double dblTotalTest;
+     double dblTotalExam;
+     double dblWeighTest;
+     double dblWeighExam;
 
     private studentResultFrame() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
@@ -88,13 +88,14 @@ public class studentResultFrame extends javax.swing.JFrame {
         strSubject = (String) cbSubjects.getSelectedItem();
         intSubjectId = mSubjectIdByName(strSubject);
         intTerm = Integer.parseInt(cbTerm.getSelectedItem().toString());
-        intTotalTest = Integer.parseInt(txtTest.getText());
-        intWeighTest = Integer.parseInt(txtWeighTest.getText());
-        intWeighExam = Integer.parseInt(txtWeighExam.getText());
+        dblTotalTest = Double.parseDouble(txtTest.getText());
+        dblWeighTest = Double.parseDouble(txtWeighTest.getText());
+        dblTotalExam = Double.parseDouble(txtExams.getText());
+        dblWeighExam = Double.parseDouble(txtWeighExam.getText());
         
         
-         averageMark = ((double) intTotalTest / 100) * intWeighTest
-                   + ((double) intTotalExam / 100) * intWeighExam;
+         averageMark = ((double) dblTotalTest / 100) * dblWeighTest
+                   + ((double) dblTotalExam / 100) * dblWeighExam;
          
      //   txtAverage.setText("The Average is: "+intAverageMark+"%");
         
@@ -126,10 +127,10 @@ public class studentResultFrame extends javax.swing.JFrame {
             String strQuery = "SELECT * FROM marks WHERE student_id = '" + intStudentId +
         "' AND subject_id = '" + intSubjectId + 
         "' AND term = '" + intTerm +
-        "' AND test_total = '" + intTotalTest + 
-        "' AND exam_total = '" + intTotalExam +
-        "' AND test_weight = '" + intWeighTest +  
-        "' AND exam_weight = '" + intWeighExam +          
+        "' AND test_total = '" + dblTotalTest + 
+        "' AND exam_total = '" + dblTotalExam +
+        "' AND test_weight = '" + dblWeighTest +  
+        "' AND exam_weight = '" + dblWeighExam +          
         "' AND average_mark = '" + averageMark + "'";
             stStatement.execute(strQuery); // Execute sql statements against the database table
             rs=stStatement.getResultSet();
@@ -158,7 +159,7 @@ public class studentResultFrame extends javax.swing.JFrame {
             conMySQLConnectionString = DriverManager.getConnection(URL2,User2,Password2); //used to gain access to database
             Statement myStatement = conMySQLConnectionString.createStatement(); 
            String sqlinsert = "insert into marks (student_id,subject_id,term,test_total,exam_total,test_weight,exam_weight,average_mark) " + //Initialises the 'insert sql statement' to store the values inserted in the textfield
-            "values ('" + intStudentId + "','"+ intSubjectId + "','" + intTerm + "','" + intTotalTest +"','"+ intTotalExam +"','" + intWeighTest + "','"+intWeighExam +"','" +averageMark + "')";
+            "values ('" + intStudentId + "','"+ intSubjectId + "','" + intTerm + "','" + dblTotalTest +"','"+ dblTotalExam +"','" + dblWeighTest + "','"+dblWeighExam +"','" +averageMark + "')";
         
             myStatement.executeUpdate(sqlinsert); // Execute sql statements against the database table
             myStatement.close(); //Close connection of the database
@@ -214,7 +215,7 @@ public class studentResultFrame extends javax.swing.JFrame {
     }
 }
        
-         private void mEditUpdate()
+         private void mEditUpdates()
              //  Update/Edit existing venues
    { 
     java.sql.Connection conMySQLConnectionString ; //Declares connection string named conMySQLConnectionString, it will contain the driver for the connection string to the database
@@ -225,17 +226,20 @@ public class studentResultFrame extends javax.swing.JFrame {
         //Get selected row information
          DefaultTableModel model = (DefaultTableModel) tblResults.getModel();//Get model of table
       int selectedIndex = tblResults.getSelectedRow();
+      
       int intMarkId = Integer.parseInt(model.getValueAt(selectedIndex,0).toString());
+    String subjectName = model.getValueAt(selectedIndex, 0).toString();
+    
         try {
             conMySQLConnectionString = DriverManager.getConnection(URL3,User3,Password3); //used to gain access to database
             Statement euStatement = conMySQLConnectionString.createStatement(); 
             String strQuery = "Update marks Set student_id = '" + intStudentId +
                   "', subject_id = '" + intSubjectId + 
                   "', term = '" + intTerm + 
-                  "', test_total = '" + intTotalTest + 
-                  "', exam_total = '" + intTotalExam + 
-                  "', test_weight = '" + intWeighTest + 
-                  "', exam_weight = '" + intWeighExam +
+                  "', test_total = '" + dblTotalTest + 
+                  "', exam_total = '" + dblTotalExam + 
+                  "', test_weight = '" + dblWeighTest + 
+                  "', exam_weight = '" + dblWeighExam +
                   "', average = '" + averageMark + 
                   "' Where mark_id = "+intMarkId;
             euStatement.executeUpdate(strQuery); // Execute sql statements against the database table
@@ -246,6 +250,88 @@ public class studentResultFrame extends javax.swing.JFrame {
          
         }
    }
+         
+         public void mEditUpdate() {
+    DefaultTableModel model = (DefaultTableModel) tblResults.getModel();
+    int selectedIndex = tblResults.getSelectedRow();
+    
+    java.sql.Connection conMySQLConnectionString ; //Declares connection string named conMySQLConnectionString, it will contain the driver for the connection string to the database
+        String URL8 = "jdbc:mysql://localhost:3306/gradebook_system"; //Connection string to the database
+        String User8 = "root"; //User name to connect to database
+        String Password8 = "528_hloni"; //User password to connect to database
+    
+    
+    
+
+    if (selectedIndex != -1) {
+        try {
+            // Get values from the table
+            String subjectName = model.getValueAt(selectedIndex, 0).toString(); // column 0 = Subject Name
+            int term = Integer.parseInt(cbTerm.getSelectedItem().toString());
+
+            // Get marks and weights from text fields
+            double testTotal = Double.parseDouble(txtTest.getText());
+            double examTotal = Double.parseDouble(txtExams.getText());
+            double testWeight = Double.parseDouble(txtWeighExam.getText());
+            double examWeight = Double.parseDouble(txtWeighTest.getText());
+
+            // Calculate average mark
+            double average = (testTotal * (testWeight / 100)) + (examTotal * (examWeight / 100));
+
+            // Get student_id (you should have stored it when opening this frame)
+            int studentId = this.intStudentId;
+
+            // Get subject_id from subject table using subject name
+            conMySQLConnectionString = DriverManager.getConnection(URL8,User8,Password8); //used to gain access to database
+            PreparedStatement pstSubject = conMySQLConnectionString.prepareStatement("SELECT subject_id FROM subjects WHERE subject_name = ?");
+            pstSubject.setString(1, subjectName);
+            ResultSet rs = pstSubject.executeQuery();
+
+            if (rs.next()) {
+                int subjectId = rs.getInt("subject_id");
+
+                // Update the correct record in marks table
+                PreparedStatement pstUpdate = conMySQLConnectionString.prepareStatement("""
+                    UPDATE marks 
+                    SET test_total = ?, exam_total = ?, test_weight = ?, exam_weight = ?, average_mark = ?
+                    WHERE student_id = ? AND subject_id = ? AND term = ? """);
+
+                pstUpdate.setDouble(1, testTotal);
+                pstUpdate.setDouble(2, examTotal);
+                pstUpdate.setDouble(3, testWeight);
+                pstUpdate.setDouble(4, examWeight);
+                pstUpdate.setDouble(5, average);
+                pstUpdate.setInt(6, studentId);
+                pstUpdate.setInt(7, subjectId);
+                pstUpdate.setInt(8, term);
+
+                int rowsUpdated = pstUpdate.executeUpdate();
+
+                if (rowsUpdated > 0) {
+                    JOptionPane.showMessageDialog(this, "Marks updated successfully.");
+                    mTableView(); // Reload data into table
+                } else {
+                    JOptionPane.showMessageDialog(this, "No matching record found to update.");
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "Subject not found in database.");
+            }
+
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage());
+        }
+    } else {
+        JOptionPane.showMessageDialog(this, "Please select a row to edit.");
+    }
+}
+         
+         
+     
+       
+         
+         
+         
+         
          
            private void mDelete()
             // Delete venue 
@@ -265,10 +351,10 @@ public class studentResultFrame extends javax.swing.JFrame {
             String strQuery =  "DELETE FROM  marks WHERE  mark_id = '"+intMarkId + "'AND student_id = '" +  intStudentId +
                   "' AND subject_id = '" + intSubjectId + 
                   "' AND term = '" + intTerm + 
-                  "' AND test_total = '" + intTotalTest + 
-                  "' AND exam_total = '" + intTotalExam + 
-                  "' AND test_weight = '" + intWeighTest + 
-                  "' AND exam_weight = '" + intWeighExam +
+                  "' AND test_total = '" + dblTotalTest + 
+                  "' AND exam_total = '" + dblTotalExam + 
+                  "' AND test_weight = '" + dblWeighTest + 
+                  "' AND exam_weight = '" + dblWeighExam +
                   "' AND average = '" + averageMark + "'" ;       
             
             dtStatement.executeUpdate(strQuery); // Execute sql statements against the database table
@@ -714,7 +800,7 @@ public class studentResultFrame extends javax.swing.JFrame {
     String Password4 = "528_hloni"; // 
     PreparedStatement pst;
     java.sql.Connection conMySQLConnectionString ;
-
+ int intSubjectId = mSubjectIdByName(subjectName);
     
         
 
@@ -725,7 +811,7 @@ public class studentResultFrame extends javax.swing.JFrame {
         "WHERE subject_Id = ? AND term = ? AND student_Id = ?";
     pst = conMySQLConnectionString.prepareStatement(sql2);
         
-  //  int intSubjectId = mSubjectIdByName(subjectName);
+  
         pst.setInt(1, intSubjectId);
         pst.setInt(2, term);
         pst.setInt(3, intStudentId); // Replace with actual variable for selected student
