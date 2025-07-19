@@ -97,14 +97,14 @@ public class studentResultFrame extends javax.swing.JFrame {
          averageMark = ((double) dblTotalTest / 100) * dblWeighTest
                    + ((double) dblTotalExam / 100) * dblWeighExam;
          
-     //   txtAverage.setText("The Average is: "+intAverageMark+"%");
+    
         
          } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null,"Enter correct input "+""+e);
         }
         
-        txtAverage.setText(String.valueOf(averageMark));
+     //   txtAverage.setText(String.valueOf("The Term Average is: "+averageMark+ "%"));
     
 }
     
@@ -325,48 +325,66 @@ public class studentResultFrame extends javax.swing.JFrame {
     }
 }
          
-         
      
-       
-         
-         
-         
-         
-         
-           private void mDelete()
-            // Delete venue 
-   {
-      java.sql.Connection conMySQLConnectionString ; //Declares connection string named conMySQLConnectionString, it will contain the driver for the connection string to the database
-        String URL3 = "jdbc:mysql://localhost:3306/gradebook_system"; //Connection string to the database
-        String User3 = "root"; //User name to connect to database
-        String Password3 = "528_hloni"; //User password to connect to database
-        
-        //Get selected row information
-         DefaultTableModel model = (DefaultTableModel) tblResults.getModel();//Get model of table
-      int selectedIndex = tblResults.getSelectedRow();
-      int intMarkId = Integer.parseInt(model.getValueAt(selectedIndex,0).toString());
-        try {
-            conMySQLConnectionString = DriverManager.getConnection(URL3,User3,Password3); //used to gain access to database
-            Statement dtStatement = conMySQLConnectionString.createStatement(); 
-            String strQuery =  "DELETE FROM  marks WHERE  mark_id = '"+intMarkId + "'AND student_id = '" +  intStudentId +
-                  "' AND subject_id = '" + intSubjectId + 
-                  "' AND term = '" + intTerm + 
-                  "' AND test_total = '" + dblTotalTest + 
-                  "' AND exam_total = '" + dblTotalExam + 
-                  "' AND test_weight = '" + dblWeighTest + 
-                  "' AND exam_weight = '" + dblWeighExam +
-                  "' AND average = '" + averageMark + "'" ;       
-            
-            dtStatement.executeUpdate(strQuery); // Execute sql statements against the database table
-            dtStatement.close(); //Close connection of the database
-            JOptionPane.showMessageDialog(null,"Record Deleted");
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, e);
            
-        }  
-       
-       
-   }       
+           
+           
+           public void mDelete() {
+    DefaultTableModel model = (DefaultTableModel) tblResults.getModel();
+    int selectedIndex = tblResults.getSelectedRow();
+
+    if (selectedIndex != -1) {
+        try {
+            // Get values from selected row and GUI
+            String subjectName = model.getValueAt(selectedIndex, 0).toString(); // column 0 = subject name
+            int term = Integer.parseInt(cbTerm.getSelectedItem().toString());
+
+            // DB Connection details
+            java.sql.Connection conMySQLConnectionString;
+            String URL = "jdbc:mysql://localhost:3306/gradebook_system";
+            String User = "root";
+            String Password = "528_hloni";
+
+            conMySQLConnectionString = DriverManager.getConnection(URL, User, Password);
+
+            // Get subject_id using subject_name
+            PreparedStatement pstSubject = conMySQLConnectionString.prepareStatement(
+                "SELECT subject_id FROM subjects WHERE subject_name = ?"
+            );
+            pstSubject.setString(1, subjectName);
+            ResultSet rs = pstSubject.executeQuery();
+
+            if (rs.next()) {
+                int subjectId = rs.getInt("subject_id");
+
+                // Delete record from marks table
+                PreparedStatement pstDelete = conMySQLConnectionString.prepareStatement(
+                    "DELETE FROM marks WHERE student_id = ? AND subject_id = ? AND term = ?"
+                );
+                pstDelete.setInt(1, this.intStudentId);
+                pstDelete.setInt(2, subjectId);
+                pstDelete.setInt(3, term);
+
+                int rowsDeleted = pstDelete.executeUpdate();
+
+                if (rowsDeleted > 0) {
+                    JOptionPane.showMessageDialog(this, "Mark deleted successfully.");
+                } else {
+                    JOptionPane.showMessageDialog(this, "No matching record found to delete.");
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "Subject not found in database.");
+            }
+
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage());
+        }
+    }
+           }
+           
+           
+           
+           
            
           
 
@@ -447,7 +465,7 @@ public class studentResultFrame extends javax.swing.JFrame {
         btnEdit = new javax.swing.JButton();
         btnDelete = new javax.swing.JButton();
         btnClear = new javax.swing.JButton();
-        btnReport = new javax.swing.JButton();
+        btnPrintReport = new javax.swing.JButton();
         btnReturn = new javax.swing.JButton();
         btnMainMenu = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
@@ -523,10 +541,10 @@ public class studentResultFrame extends javax.swing.JFrame {
             }
         });
 
-        btnReport.setText("View Report");
-        btnReport.addActionListener(new java.awt.event.ActionListener() {
+        btnPrintReport.setText("Print Report");
+        btnPrintReport.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnReportActionPerformed(evt);
+                btnPrintReportActionPerformed(evt);
             }
         });
 
@@ -562,7 +580,7 @@ public class studentResultFrame extends javax.swing.JFrame {
                         .addGap(121, 121, 121)
                         .addGroup(SubjectLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(btnEdit)
-                            .addComponent(btnReport)
+                            .addComponent(btnPrintReport)
                             .addComponent(btnMainMenu))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(SubjectLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -643,7 +661,7 @@ public class studentResultFrame extends javax.swing.JFrame {
                             .addComponent(btnDelete))
                         .addGap(60, 60, 60)
                         .addGroup(SubjectLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(btnReport)
+                            .addComponent(btnPrintReport)
                             .addComponent(btnReturn)
                             .addComponent(btnClear))
                         .addGap(46, 46, 46)))
@@ -669,9 +687,9 @@ public class studentResultFrame extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btnReportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReportActionPerformed
+    private void btnPrintReportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrintReportActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_btnReportActionPerformed
+    }//GEN-LAST:event_btnPrintReportActionPerformed
 
     private void btnReturnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReturnActionPerformed
          existingStudentFrame frmExisting = new existingStudentFrame();
@@ -823,7 +841,7 @@ public class studentResultFrame extends javax.swing.JFrame {
             txtWeighTest.setText(rs.getString("test_weight"));
             txtExams.setText(rs.getString("exam_total"));
             txtWeighExam.setText(rs.getString("exam_weight"));
-            txtAverage.setText(rs.getString("average_mark"));
+            txtAverage.setText("The Average Term Mark is "+rs.getString("average_mark"));
         } else {
             // If no data found, clear fields
             txtTest.setText("");
@@ -906,7 +924,7 @@ public class studentResultFrame extends javax.swing.JFrame {
     private javax.swing.JButton btnEdit;
     private javax.swing.JButton btnInsert;
     private javax.swing.JButton btnMainMenu;
-    private javax.swing.JButton btnReport;
+    private javax.swing.JButton btnPrintReport;
     private javax.swing.JButton btnReturn;
     private javax.swing.JComboBox<String> cbSubjects;
     private javax.swing.JComboBox<String> cbTerm;

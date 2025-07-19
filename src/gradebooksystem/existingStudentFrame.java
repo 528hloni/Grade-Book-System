@@ -149,6 +149,37 @@ public class existingStudentFrame extends javax.swing.JFrame {
            
         }
    }
+      
+      
+       private void mDelete()
+            // Delete student
+   {
+      java.sql.Connection conMySQLConnectionString ; //Declares connection string named conMySQLConnectionString, it will contain the driver for the connection string to the database
+        String URL8 = "jdbc:mysql://localhost:3306/gradebook_system"; //Connection string to the database
+        String User8 = "root"; //User name to connect to database
+        String Password8 = "528_hloni"; //User password to connect to database
+        
+        //Get selected row information
+         DefaultTableModel model = (DefaultTableModel) tblStudents.getModel();//Get model of table
+      int selectedIndex = tblStudents.getSelectedRow();
+      int intStudentID = Integer.parseInt(model.getValueAt(selectedIndex,0).toString());
+        try {
+            conMySQLConnectionString = DriverManager.getConnection(URL8,User8,Password8); //used to gain access to database
+            Statement dtStatement = conMySQLConnectionString.createStatement(); 
+            String strQuery = "DELETE FROM students WHERE student_id = '" + intStudentID + "' AND id_number = '" + strIdNumber +
+                    "' AND name = '" + strName + "' AND surname = '" + strSurname +
+                    "' AND gender = '" + strGender + "' AND date_of_birth = '" + strDOB + "'";
+            
+            dtStatement.executeUpdate(strQuery); // Execute sql statements against the database table
+            dtStatement.close(); //Close connection of the database
+            JOptionPane.showMessageDialog(null,"Record Deleted");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e);
+           
+        }  
+       
+       
+   }    
    
    
 
@@ -293,6 +324,11 @@ public class existingStudentFrame extends javax.swing.JFrame {
         });
 
         btnDelete.setText("Delete");
+        btnDelete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDeleteActionPerformed(evt);
+            }
+        });
 
         lblID.setText("ID Number:");
 
@@ -521,6 +557,30 @@ public class existingStudentFrame extends javax.swing.JFrame {
    
 
     }//GEN-LAST:event_tblStudentsMouseClicked
+
+    private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
+        //Delete
+         
+         int selectedIndex = tblStudents.getSelectedRow();
+    if (selectedIndex == -1) { // No row is selected
+        JOptionPane.showMessageDialog(null, "Please select a row to delete.");
+    }else{
+      
+    //Add confirmation JOptionPane dialog before deleting a record
+ int response = JOptionPane.showConfirmDialog(null, "Are You Sure You Want To DELETE this Student",
+        "Select An Option",JOptionPane.YES_NO_OPTION,JOptionPane.ERROR_MESSAGE);
+        
+       if (response == JOptionPane.YES_OPTION){
+        mGetValuesFromGUI();
+        mDelete();  
+        mTableStudentsView();
+        mClearTextFields();
+    }
+       else{
+           JOptionPane.showMessageDialog(null, "Delete Cancelled");
+       }
+    }    
+    }//GEN-LAST:event_btnDeleteActionPerformed
 
     /**
      * @param args the command line arguments
