@@ -101,13 +101,14 @@ public class mainFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnCreateStudentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCreateStudentActionPerformed
-        // TODO add your handling code here:
+        // Create a student
         createStudentFrame frmCreate = new createStudentFrame();
        frmCreate.setVisible(true);
        this.setVisible(false);
     }//GEN-LAST:event_btnCreateStudentActionPerformed
 
     private void btnExistingStudentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExistingStudentActionPerformed
+       // Go to an existing student
         existingStudentFrame frmExisting = new existingStudentFrame();
        frmExisting.setVisible(true);
        this.setVisible(false);

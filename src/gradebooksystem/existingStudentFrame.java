@@ -32,7 +32,7 @@ public class existingStudentFrame extends javax.swing.JFrame {
     }
     
      Boolean boolRecordExists=false; //boolean will be used to check if record exists
-     Boolean boolSubjectAlreadyLinked = false;
+   
     String strIdNumber;
     String strName;
     String strSurname;
@@ -54,7 +54,7 @@ public class existingStudentFrame extends javax.swing.JFrame {
            SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");//format
         strDOB= sdf1.format(dcDOB.getDate());
        
-         
+         // Get gender selection from radio buttons
          if (rdoMale.isSelected()) {
             strGender = "Male";
         } else if (rdoFemale.isSelected()) {
@@ -77,15 +77,17 @@ public class existingStudentFrame extends javax.swing.JFrame {
    
   
       private void mTableStudentsView() {
+      //Loads info onto table    
+          
     int CC; // Column count
-    java.sql.Connection conMySQLConnectionString;
-    String URL3 = "jdbc:mysql://localhost:3306/gradebook_system";
-    String User3 = "root";
-    String Password3 = "528_hloni";
+    java.sql.Connection conMySQLConnectionString; //Declares connection string named conMySQLConnectionString,it will contain the driver for the connection string to the database
+    String URL3 = "jdbc:mysql://localhost:3306/gradebook_system";  //Connection string to the database
+    String User3 = "root"; //User name to connect to database
+    String Password3 = "528_hloni"; //User password to connect to database
     PreparedStatement pst;
     
     try {
-        conMySQLConnectionString = DriverManager.getConnection(URL3, User3, Password3);
+        conMySQLConnectionString = DriverManager.getConnection(URL3, User3, Password3); //used to gain access to database 
 
         // Updated query to include subjects using JOINs and GROUP_CONCAT
         String sql = "SELECT s.student_id, s.id_number, s.name, s.surname, s.gender, s.date_of_birth, " +
@@ -95,11 +97,13 @@ public class existingStudentFrame extends javax.swing.JFrame {
                      "LEFT JOIN subjects sub ON ss.subject_id = sub.subject_id " +
                      "GROUP BY s.student_id";
 
-        pst = conMySQLConnectionString.prepareStatement(sql);
-        ResultSet Rs1 = pst.executeQuery();
-        DefaultTableModel DFT = (DefaultTableModel) tblStudents.getModel();
+        pst = conMySQLConnectionString.prepareStatement(sql); //SQL query to retrieve all records 
+        ResultSet Rs1 = pst.executeQuery();  // Execute the query and store result in ResultSet
+        DefaultTableModel DFT = (DefaultTableModel) tblStudents.getModel(); // Get the table model and clear previous rows to avoid duplication
         DFT.setRowCount(0); // Clear previous rows
 
+        
+        // Loop through each record in the result set and populate the JTable
         while (Rs1.next()) {
             Vector v2 = new Vector();
             v2.add(Rs1.getString("student_id"));
@@ -108,8 +112,8 @@ public class existingStudentFrame extends javax.swing.JFrame {
             v2.add(Rs1.getString("surname"));
             v2.add(Rs1.getString("date_of_birth"));
             v2.add(Rs1.getString("gender"));
-            v2.add(Rs1.getString("subjects") == null ? "No subjects" : Rs1.getString("subjects")); // fallback
-            DFT.addRow(v2);
+            v2.add(Rs1.getString("subjects") == null ? "No subjects" : Rs1.getString("subjects")); //  fallback to "No subjects" if student has none
+            DFT.addRow(v2);  // Add row to the table model
         }
 
     } catch (Exception e) {
@@ -121,7 +125,7 @@ public class existingStudentFrame extends javax.swing.JFrame {
    
    
       private void mEditUpdateStudent()
-             //  Update/Edit existing venues
+             //  Update/Edit existing student
    { 
     java.sql.Connection conMySQLConnectionString ; //Declares connection string named conMySQLConnectionString, it will contain the driver for the connection string to the database
         String URL3 = "jdbc:mysql://localhost:3306/gradebook_system"; //Connection string to the database
@@ -468,16 +472,20 @@ public class existingStudentFrame extends javax.swing.JFrame {
 
     private void btnNextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNextActionPerformed
         
-        int selectedIndex = tblStudents.getSelectedRow();
-        if (selectedIndex == -1) {
-            JOptionPane.showMessageDialog(null,"Please select a student");
+        int selectedIndex = tblStudents.getSelectedRow(); // Get the selected row index from the table
+
+        if (selectedIndex == -1) {  // Check if no row is selected
+            JOptionPane.showMessageDialog(null,"Please select a student"); // Show error message
         }else {
+             // Get the table model to access row data
             DefaultTableModel model = (DefaultTableModel) tblStudents.getModel();
             
+            // Retrieve values from the selected row
             int intStudentId = Integer.parseInt(model.getValueAt(selectedIndex,0).toString());
             String strName = model.getValueAt(selectedIndex,2).toString();
             String strSurname = model.getValueAt(selectedIndex, 3).toString();
             
+             // Open the studentResultFrame and pass the selected student's info to it
              studentResultFrame frmStudentResult = new studentResultFrame(intStudentId, strName,strSurname);
        frmStudentResult.setVisible(true);
        this.setVisible(false);
@@ -491,7 +499,7 @@ public class existingStudentFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_btnNextActionPerformed
 
     private void btnReturnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReturnActionPerformed
-        // TODO add your handling code here:
+        
          mainFrame frmMain = new mainFrame();
        frmMain.setVisible(true);
        this.setVisible(false);
@@ -502,11 +510,11 @@ public class existingStudentFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_formWindowOpened
 
     private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
-        // TODO add your handling code here:
         
-        int selectedIndex = tblStudents.getSelectedRow(); // NOTE: use tblStudents now
-    if (selectedIndex == -1) {
-        JOptionPane.showMessageDialog(null, "Please select a row to edit.");
+        
+        int selectedIndex = tblStudents.getSelectedRow(); // Get the selected row index from the table
+    if (selectedIndex == -1) { // Check if no row is selected
+        JOptionPane.showMessageDialog(null, "Please select a row to edit."); //Show error message
     } else {
         mGetValuesFromGUI();
         mSetvaluesToUpperCase();
@@ -525,9 +533,9 @@ public class existingStudentFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_btnEditActionPerformed
 
     private void tblStudentsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblStudentsMouseClicked
-        // TODO add your handling code here:
         
-    
+        
+    // Get the table model and selected row index
     DefaultTableModel model = (DefaultTableModel) tblStudents.getModel();
     int selectedIndex = tblStudents.getSelectedRow();
 
@@ -559,7 +567,7 @@ public class existingStudentFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_tblStudentsMouseClicked
 
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
-        //Delete
+        
          
          int selectedIndex = tblStudents.getSelectedRow();
     if (selectedIndex == -1) { // No row is selected

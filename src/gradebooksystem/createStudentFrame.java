@@ -29,7 +29,7 @@ public class createStudentFrame extends javax.swing.JFrame {
     }
     
      Boolean boolRecordExists=false; //boolean will be used to check if record exists
-     Boolean boolSubjectAlreadyLinked = false;  //boolean will be used to check if record exist
+     Boolean boolSubjectAlreadyLinked = false;  //boolean will be used to check if subject exists
     String strIdNumber;
     String strName;
     String strSurname;
@@ -47,13 +47,10 @@ public class createStudentFrame extends javax.swing.JFrame {
           strName = txtName.getText();
           strSurname = txtSurname.getText();
           
-           
-       
-          
            SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");//format
         strDOB= sdf1.format(dcDOB.getDate());
        
-         
+          // Get gender selection from radio buttons
          if (rdoMale.isSelected()) {
             strGender = "Male";
         } else if (rdoFemale.isSelected()) {
@@ -68,15 +65,13 @@ public class createStudentFrame extends javax.swing.JFrame {
              
          }
          
-         lstSubjects.getSelectedValuesList(); // List<String>
-       
-        
+         // Get the selected subjects from the list box (returns a List<String>)
+         lstSubjects.getSelectedValuesList(); // List<String>  
        
     }
        
         private void mSetvaluesToUpperCase(){
         //values will be uppercase
-       
         
         strName = strName.toUpperCase();
         strSurname = strSurname.toUpperCase();
@@ -86,7 +81,7 @@ public class createStudentFrame extends javax.swing.JFrame {
         }
        
         private void mLoadListItem() {
-         //Loading items from Event table(event name)
+         //Loading items from table to JList
          
          String URL5 = "jdbc:mysql://localhost:3306/gradebook_system"; //Connection string to the database
         String User5 = "root"; //User name to connect to database
@@ -162,21 +157,21 @@ public class createStudentFrame extends javax.swing.JFrame {
          private void mCheckIfSubjectAlreadyLinked(int studentId, int subjectId) {
     // Validation to prevent duplication
 
-    String URL = "jdbc:mysql://localhost:3306/gradebook_system";
-    String User = "root";
-    String Password = "528_hloni";
-    java.sql.Connection conMySQLConnectionString;
-    Statement stStatement = null;
-    ResultSet rs = null;
+    String URL = "jdbc:mysql://localhost:3306/gradebook_system"; //Connection string to the database
+    String User = "root"; //User name to connect to database
+    String Password = "528_hloni"; //User password to connect to database
+    java.sql.Connection conMySQLConnectionString; //Declares connection string named conMySQLConnectionString,it will contain the driver for the connection string to the database
+    Statement stStatement = null; //Declares statement named stStatement which will contain sql statement
+    ResultSet rs = null; //Declares statement named rs which will contain quiried data from the table
 
     try {
-        conMySQLConnectionString = DriverManager.getConnection(URL, User, Password);
-        stStatement = conMySQLConnectionString.createStatement();
+        conMySQLConnectionString = DriverManager.getConnection(URL, User, Password);  //Used to gain access to database
+        stStatement = conMySQLConnectionString.createStatement(); //This will instruct stStatement to execute SQL statement against the table in database
 
         String strQuery = "SELECT * FROM student_subjects WHERE student_id = " + studentId +
                           " AND subject_id = " + subjectId;
 
-        stStatement.execute(strQuery);
+        stStatement.execute(strQuery); // Execute sql statements against the database table
         rs = stStatement.getResultSet();
         boolSubjectAlreadyLinked = rs.next(); // TRUE if subject already exists
 
@@ -191,9 +186,9 @@ public class createStudentFrame extends javax.swing.JFrame {
     }
 }
          
-             private void mCreateStudent()
-                //Create a new attendee
-    {
+             private void mCreateStudent() {
+                //Create a new student
+    
         java.sql.Connection conMySQLConnectionString ; //Declares connection string named conMySQLConnectionString, it will contain the driver for the connection string to the database
         String URL2 = "jdbc:mysql://localhost:3306/gradebook_system"; //Connection string to the database
         String User2 = "root"; //User name to connect to database
@@ -214,9 +209,9 @@ public class createStudentFrame extends javax.swing.JFrame {
         
     }  
              
-              private void mCreateStudentSubjects()
-                
-    {
+              private void mCreateStudentSubjects() {
+              // Create Subjects  
+    
         java.sql.Connection conMySQLConnectionString ; //Declares connection string named conMySQLConnectionString, it will contain the driver for the connection string to the database
         String URL7 = "jdbc:mysql://localhost:3306/gradebook_system"; //Connection string to the database
         String User7 = "root"; //User name to connect to database
@@ -225,7 +220,7 @@ public class createStudentFrame extends javax.swing.JFrame {
             conMySQLConnectionString = DriverManager.getConnection(URL7,User7,Password7); //used to gain access to database
            
 
-        // Step 1: Get student_id using the ID number
+        //  Get student_id using the ID number
         String getStudentIdQuery = "SELECT student_id FROM students WHERE id_number = ?";
         PreparedStatement pstStudent = conMySQLConnectionString.prepareStatement(getStudentIdQuery);
         pstStudent.setString(1, strIdNumber); // Assuming you've already collected intIdNumber from GUI
@@ -238,14 +233,14 @@ public class createStudentFrame extends javax.swing.JFrame {
 
         int studentId = rsStudent.getInt("student_id");
 
-        // Step 2: Prepare statements
+        //  Prepare statements
         String getSubjectIdQuery = "SELECT subject_id FROM subjects WHERE subject_name = ?";
         PreparedStatement pstSubject = conMySQLConnectionString.prepareStatement(getSubjectIdQuery);
 
         String insertLinkQuery = "INSERT INTO student_subjects (student_id, subject_id) VALUES (?, ?)";
         PreparedStatement pstInsert = conMySQLConnectionString.prepareStatement(insertLinkQuery);
 
-        // Step 3: Loop through selected subjects from JList
+        // Loop through selected subjects from JList
         for (String subjectName : selectedSubjects) {
             // Lookup subject_id
             pstSubject.setString(1, subjectName);
@@ -271,10 +266,13 @@ public class createStudentFrame extends javax.swing.JFrame {
         JOptionPane.showMessageDialog(this, "Error linking subjects: " + e.getMessage());
     }
 }
+              
               private void mLoadSelectedSubjectsFromJList() {
+          // Method to load the selected subjects from the JList into the selectedSubjects list
+          
     selectedSubjects.clear(); //  clear before loading new selection
-    for (Object subject : lstSubjects.getSelectedValuesList()) {
-        selectedSubjects.add(subject.toString());
+    for (Object subject : lstSubjects.getSelectedValuesList()) {   // Loop through each selected item in the JList
+        selectedSubjects.add(subject.toString());// Convert each selected object to a String and add it to the selectedSubjects list
     }
 }
         
@@ -320,6 +318,7 @@ public class createStudentFrame extends javax.swing.JFrame {
         rdoFemale = new javax.swing.JRadioButton();
         btnReturn = new javax.swing.JButton();
         btnClear = new javax.swing.JButton();
+        lblMultiple = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -377,6 +376,8 @@ public class createStudentFrame extends javax.swing.JFrame {
             }
         });
 
+        lblMultiple.setText("Note: To click multiple subjects, press CRTL and ENTER");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -408,13 +409,13 @@ public class createStudentFrame extends javax.swing.JFrame {
                             .addComponent(txtSurname, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 216, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                     .addComponent(lblGender, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .addComponent(lblSubjects, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 66, Short.MAX_VALUE))
                                 .addGap(12, 12, 12))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 200, Short.MAX_VALUE)
                                 .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
@@ -423,14 +424,20 @@ public class createStudentFrame extends javax.swing.JFrame {
                                 .addGap(75, 75, 75)
                                 .addComponent(dcDOB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGap(21, 21, 21)
+                                .addGap(28, 28, 28)
                                 .addComponent(rdoMale, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(33, 33, 33)
                                 .addComponent(rdoFemale, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(49, 49, 49))
+                        .addGap(22, 22, 22))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(119, 119, 119))))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(121, 121, 121))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addComponent(lblMultiple)
+                                .addContainerGap())))))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
@@ -464,14 +471,14 @@ public class createStudentFrame extends javax.swing.JFrame {
                     .addComponent(lblGender)
                     .addComponent(rdoMale)
                     .addComponent(rdoFemale))
-                .addGap(42, 42, 42)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(42, 42, 42)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(lblSurname)
                             .addComponent(txtSurname, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(lblSubjects))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 81, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 96, Short.MAX_VALUE)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(btnCreate)
                             .addComponent(btnReturn))
@@ -479,6 +486,9 @@ public class createStudentFrame extends javax.swing.JFrame {
                         .addComponent(btnClear)
                         .addGap(123, 123, 123))
                     .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(34, 34, 34)
+                        .addComponent(lblMultiple, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
@@ -487,8 +497,7 @@ public class createStudentFrame extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(27, 27, 27)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
@@ -497,7 +506,7 @@ public class createStudentFrame extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(21, 21, 21))
+                .addContainerGap())
         );
 
         pack();
@@ -510,7 +519,7 @@ public class createStudentFrame extends javax.swing.JFrame {
     private void btnCreateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCreateActionPerformed
       
         mLoadSelectedSubjectsFromJList();
-         //Create
+         
         
         
         //Validation
@@ -641,6 +650,7 @@ public class createStudentFrame extends javax.swing.JFrame {
     private javax.swing.JLabel lblCreateStudent;
     private javax.swing.JLabel lblGender;
     private javax.swing.JLabel lblID;
+    private javax.swing.JLabel lblMultiple;
     private javax.swing.JLabel lblName;
     private javax.swing.JLabel lblSubjects;
     private javax.swing.JLabel lblSurname;

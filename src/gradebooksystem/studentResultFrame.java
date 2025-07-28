@@ -51,19 +51,19 @@ public class studentResultFrame extends javax.swing.JFrame {
     }
     
     private void mLoadSubjectsIntoCB() {
-    java.sql.Connection conMySQLConnectionString;    
-    String URL = "jdbc:mysql://localhost:3306/gradebook_system";
-    String User = "root";
-    String Password = "528_hloni"; // 
+    java.sql.Connection conMySQLConnectionString;    //Declares connection string named conMySQLConnectionString,it will contain the driver for the connection string to the database
+    String URL = "jdbc:mysql://localhost:3306/gradebook_system"; //Connection string to the database
+    String User = "root";  //User name to connect to database
+    String Password = "528_hloni"; //User password to connect to database
     PreparedStatement pst;
 
     try {
-        conMySQLConnectionString = DriverManager.getConnection(URL, User, Password);
+        conMySQLConnectionString = DriverManager.getConnection(URL, User, Password); //used to gain access to database
         
         String sql = "SELECT sub.subject_name FROM student_subjects ss " +
                      "JOIN subjects sub ON ss.subject_id = sub.subject_id " +
                      "WHERE ss.student_id = ?";
-         pst = conMySQLConnectionString.prepareStatement(sql);
+         pst = conMySQLConnectionString.prepareStatement(sql); //SQL query to retrieve all records
         
         pst.setInt(1, intStudentId);  // `studentId` passed from the constructor
         ResultSet rs = pst.executeQuery();
@@ -93,7 +93,8 @@ public class studentResultFrame extends javax.swing.JFrame {
         dblTotalExam = Double.parseDouble(txtExams.getText());
         dblWeighExam = Double.parseDouble(txtWeighExam.getText());
         
-        
+        // Calculate the final average mark based on weights
+        // Example: (Test/100) * weight + (Exam/100) * weight
          averageMark = ((double) dblTotalTest / 100) * dblWeighTest
                    + ((double) dblTotalExam / 100) * dblWeighExam;
          
@@ -104,7 +105,7 @@ public class studentResultFrame extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null,"Enter correct input "+""+e);
         }
         
-     //   txtAverage.setText(String.valueOf("The Term Average is: "+averageMark+ "%"));
+    
     
 }
     
@@ -149,7 +150,7 @@ public class studentResultFrame extends javax.swing.JFrame {
     }
       
       private void mInsert()
-              //Creating new venues
+              //Creating new marks
     {
         java.sql.Connection conMySQLConnectionString ; //Declares connection string named conMySQLConnectionString, it will contain the driver for the connection string to the database
         String URL2 = "jdbc:mysql://localhost:3306/gradebook_system"; //Connection string to the database
@@ -173,13 +174,18 @@ public class studentResultFrame extends javax.swing.JFrame {
     
        private void mTableView(){
          //Viewing table
-      String URL5 = "jdbc:mysql://localhost:3306/gradebook_system";
-    String User5 = "root";
-    String Password5 = "528_hloni";
-     java.sql.Connection conMySQLConnectionString ;
+      String URL5 = "jdbc:mysql://localhost:3306/gradebook_system"; //Declares connection string named conMySQLConnectionString, it will contain the driver for the connection string to the database
+    String User5 = "root"; //User name to connect to database
+    String Password5 = "528_hloni";  //User password to connect to database
+     java.sql.Connection conMySQLConnectionString ; //Declares connection string named conMySQLConnectionString, it will contain the driver for the connection string to the database
 
     try{
-        conMySQLConnectionString = DriverManager.getConnection(URL5,User5,Password5);
+        conMySQLConnectionString = DriverManager.getConnection(URL5,User5,Password5); //used to gain access to database
+        
+         // SQL query:
+        // - Gets subject names
+        // - Uses conditional aggregation to get marks for Term 1 to Term 4 per subject
+        // - Groups results by subject name
         String sql = """
             SELECT 
                 sub.subject_name,
@@ -193,13 +199,18 @@ public class studentResultFrame extends javax.swing.JFrame {
             GROUP BY sub.subject_name
         """;
 
+        // Prepare the SQL statement with a placeholder for student_id
         PreparedStatement pst = conMySQLConnectionString.prepareStatement(sql);
-        pst.setInt(1, intStudentId);
+        pst.setInt(1, intStudentId); // Set the student ID to filter the marks
+        
+         // Execute the query
         ResultSet rs = pst.executeQuery();
 
+        // Clear the existing rows in the table to avoid duplicates
         DefaultTableModel model = (DefaultTableModel) tblResults.getModel();
         model.setRowCount(0); // Clear table first
 
+         // Iterate through each result row and add it to the JTable
         while (rs.next()) {
             Vector<Object> row = new Vector<>();
             row.add(rs.getString("subject_name"));
@@ -215,44 +226,16 @@ public class studentResultFrame extends javax.swing.JFrame {
     }
 }
        
-         private void mEditUpdates()
-             //  Update/Edit existing venues
-   { 
-    java.sql.Connection conMySQLConnectionString ; //Declares connection string named conMySQLConnectionString, it will contain the driver for the connection string to the database
-        String URL3 = "jdbc:mysql://localhost:3306/gradebook_system"; //Connection string to the database
-        String User3 = "root"; //User name to connect to database
-        String Password3 = "528_hloni"; //User password to connect to database
-     
-        //Get selected row information
-         DefaultTableModel model = (DefaultTableModel) tblResults.getModel();//Get model of table
-      int selectedIndex = tblResults.getSelectedRow();
-      
-      int intMarkId = Integer.parseInt(model.getValueAt(selectedIndex,0).toString());
-    String subjectName = model.getValueAt(selectedIndex, 0).toString();
-    
-        try {
-            conMySQLConnectionString = DriverManager.getConnection(URL3,User3,Password3); //used to gain access to database
-            Statement euStatement = conMySQLConnectionString.createStatement(); 
-            String strQuery = "Update marks Set student_id = '" + intStudentId +
-                  "', subject_id = '" + intSubjectId + 
-                  "', term = '" + intTerm + 
-                  "', test_total = '" + dblTotalTest + 
-                  "', exam_total = '" + dblTotalExam + 
-                  "', test_weight = '" + dblWeighTest + 
-                  "', exam_weight = '" + dblWeighExam +
-                  "', average = '" + averageMark + 
-                  "' Where mark_id = "+intMarkId;
-            euStatement.executeUpdate(strQuery); // Execute sql statements against the database table
-            euStatement.close(); //Close connection of the database
-            JOptionPane.showMessageDialog(null,"Record Updated");
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, e);
+       
+       
          
-        }
-   }
          
          public void mEditUpdate() {
+             
+             // Get the model of the JTable to access its data
     DefaultTableModel model = (DefaultTableModel) tblResults.getModel();
+    
+     // Get index of the selected row
     int selectedIndex = tblResults.getSelectedRow();
     
     java.sql.Connection conMySQLConnectionString ; //Declares connection string named conMySQLConnectionString, it will contain the driver for the connection string to the database
@@ -262,12 +245,12 @@ public class studentResultFrame extends javax.swing.JFrame {
     
     
     
-
+// Check if a row in the table is selected
     if (selectedIndex != -1) {
         try {
             // Get values from the table
-            String subjectName = model.getValueAt(selectedIndex, 0).toString(); // column 0 = Subject Name
-            int term = Integer.parseInt(cbTerm.getSelectedItem().toString());
+            String subjectName = model.getValueAt(selectedIndex, 0).toString(); // Get Subject Name
+            int term = Integer.parseInt(cbTerm.getSelectedItem().toString()); // Get Term
 
             // Get marks and weights from text fields
             double testTotal = Double.parseDouble(txtTest.getText());
@@ -304,7 +287,8 @@ public class studentResultFrame extends javax.swing.JFrame {
                 pstUpdate.setInt(6, studentId);
                 pstUpdate.setInt(7, subjectId);
                 pstUpdate.setInt(8, term);
-
+                
+               // Execute the update query
                 int rowsUpdated = pstUpdate.executeUpdate();
 
                 if (rowsUpdated > 0) {
@@ -336,16 +320,16 @@ public class studentResultFrame extends javax.swing.JFrame {
     if (selectedIndex != -1) {
         try {
             // Get values from selected row and GUI
-            String subjectName = model.getValueAt(selectedIndex, 0).toString(); // column 0 = subject name
-            int term = Integer.parseInt(cbTerm.getSelectedItem().toString());
+            String subjectName = model.getValueAt(selectedIndex, 0).toString(); // Get subject name from the selected row
+            int term = Integer.parseInt(cbTerm.getSelectedItem().toString()); // Get the selected term from the combo box
 
             // DB Connection details
-            java.sql.Connection conMySQLConnectionString;
-            String URL = "jdbc:mysql://localhost:3306/gradebook_system";
-            String User = "root";
-            String Password = "528_hloni";
+            java.sql.Connection conMySQLConnectionString; //Declares connection string named conMySQLConnectionString, it will contain the driver for the connection string to the database
+            String URL = "jdbc:mysql://localhost:3306/gradebook_system";  //Connection string to the database
+            String User = "root"; //User name to connect to database
+            String Password = "528_hloni"; //User password to connect to database
 
-            conMySQLConnectionString = DriverManager.getConnection(URL, User, Password);
+            conMySQLConnectionString = DriverManager.getConnection(URL, User, Password); //used to gain access to database
 
             // Get subject_id using subject_name
             PreparedStatement pstSubject = conMySQLConnectionString.prepareStatement(
@@ -354,6 +338,7 @@ public class studentResultFrame extends javax.swing.JFrame {
             pstSubject.setString(1, subjectName);
             ResultSet rs = pstSubject.executeQuery();
 
+             // If subject exists in database, proceed with deletion
             if (rs.next()) {
                 int subjectId = rs.getInt("subject_id");
 
@@ -365,6 +350,7 @@ public class studentResultFrame extends javax.swing.JFrame {
                 pstDelete.setInt(2, subjectId);
                 pstDelete.setInt(3, term);
 
+                // Execute delete query
                 int rowsDeleted = pstDelete.executeUpdate();
 
                 if (rowsDeleted > 0) {
@@ -390,30 +376,33 @@ public class studentResultFrame extends javax.swing.JFrame {
 
            
            private int mSubjectIdByName(String strSubject) {
-     intSubjectId = -1; // Local variable, initialize with -1
+     intSubjectId = -1; // Default value in case the subject is not found
 
-    String URL9 = "jdbc:mysql://localhost:3306/gradebook_system";
-    String User9 = "root";
-    String Password9 = "528_hloni";
+    String URL9 = "jdbc:mysql://localhost:3306/gradebook_system"; //Connection string to the database
+    String User9 = "root"; //User name to connect to database
+    String Password9 = "528_hloni"; //User password to connect to database
     String sql = "SELECT subject_id FROM subjects WHERE subject_name = ?"; 
+    
 
     try (
         java.sql.Connection conMySQLConnectionString = DriverManager.getConnection(URL9, User9, Password9);
         PreparedStatement pst = conMySQLConnectionString.prepareStatement(sql)
     ) {
-        pst.setString(1, strSubject);
-        ResultSet rs = pst.executeQuery();
+        pst.setString(1, strSubject); //User password to connect to database
+        ResultSet rs = pst.executeQuery(); //User password to connect to database
 
         if (rs.next()) {
+            //User password to connect to database
             intSubjectId = rs.getInt("subject_id");
         } else {
+            //User password to connect to database
             JOptionPane.showMessageDialog(null, "Subject '" + strSubject + "' not found in database.");
         }
 
     } catch (Exception e) {
         JOptionPane.showMessageDialog(null, e);
     }
-
+//User password to connect to database
     return intSubjectId;
 }
    
@@ -714,7 +703,7 @@ public class studentResultFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_formWindowOpened
 
     private void btnInsertActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInsertActionPerformed
-    
+    // validation
         if (cbSubjects.getSelectedIndex() == -1)
         {
             JOptionPane.showMessageDialog(null,"The field cannot be left empty");
