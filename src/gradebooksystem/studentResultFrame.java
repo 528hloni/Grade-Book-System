@@ -20,31 +20,31 @@ import javax.swing.table.DefaultTableModel;
  */
 public class studentResultFrame extends javax.swing.JFrame {
 
-    private int intStudentId;
-    private String strName;
-    private String strSurname;
+    private int iStudentId;
+    private String sName;
+    private String sSurname;
     
-    public studentResultFrame(int intStudentId, String strName, String strSurname) {
+    public studentResultFrame(int iStudentId, String sName, String sSurname) {
         initComponents();
-        this.intStudentId = intStudentId;
-        this.strName = strName;
-        this.strSurname = strSurname;
+        this.iStudentId = iStudentId;
+        this.sName = sName;
+        this.sSurname = sSurname;
         
-        lbllearner.setText( strName + " " + strSurname);
+        lbllearner.setText(sName + " " + sSurname);
         
         
         
     }
     
-     Boolean boolRecordExists=false; //boolean will be used to check if record exists
-     String strSubject;
-     int intSubjectId;
-     double averageMark;
-     int intTerm;
-     double dblTotalTest;
-     double dblTotalExam;
-     double dblWeighTest;
-     double dblWeighExam;
+     Boolean bRecordExists=false; //boolean will be used to check if record exists
+     String sSubject;
+     int iSubjectId;
+     double dAverageMark;
+     int iTerm;
+     double dTotalTest;
+     double dTotalExam;
+     double dWeighTest;
+     double dWeighExam;
 
     private studentResultFrame() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
@@ -52,20 +52,20 @@ public class studentResultFrame extends javax.swing.JFrame {
     
     private void mLoadSubjectsIntoCB() {
     java.sql.Connection conMySQLConnectionString;    //Declares connection string named conMySQLConnectionString,it will contain the driver for the connection string to the database
-    String URL = "jdbc:mysql://localhost:3306/gradebook_system"; //Connection string to the database
-    String User = "root";  //User name to connect to database
-    String Password = "528_hloni"; //User password to connect to database
+    String sURL = "jdbc:mysql://localhost:3306/gradebook_system"; //Connection string to the database
+    String sUser = "root";  //User name to connect to database
+    String sPassword = "528_hloni"; //User password to connect to database
     PreparedStatement pst;
 
     try {
-        conMySQLConnectionString = DriverManager.getConnection(URL, User, Password); //used to gain access to database
+        conMySQLConnectionString = DriverManager.getConnection(sURL, sUser, sPassword); //used to gain access to database
         
-        String sql = "SELECT sub.subject_name FROM student_subjects ss " +
+        String sSelect = "SELECT sub.subject_name FROM student_subjects ss " +
                      "JOIN subjects sub ON ss.subject_id = sub.subject_id " +
                      "WHERE ss.student_id = ?";
-         pst = conMySQLConnectionString.prepareStatement(sql); //SQL query to retrieve all records
+         pst = conMySQLConnectionString.prepareStatement(sSelect); //SQL query to retrieve all records
         
-        pst.setInt(1, intStudentId);  // `studentId` passed from the constructor
+        pst.setInt(1, iStudentId);  // `iStudentId` passed from the constructor
         ResultSet rs = pst.executeQuery();
         
 
@@ -85,18 +85,18 @@ public class studentResultFrame extends javax.swing.JFrame {
     private void mGetValuesFromGui(){
         
         try{
-        strSubject = (String) cbSubjects.getSelectedItem();
-        intSubjectId = mSubjectIdByName(strSubject);
-        intTerm = Integer.parseInt(cbTerm.getSelectedItem().toString());
-        dblTotalTest = Double.parseDouble(txtTest.getText());
-        dblWeighTest = Double.parseDouble(txtWeighTest.getText());
-        dblTotalExam = Double.parseDouble(txtExams.getText());
-        dblWeighExam = Double.parseDouble(txtWeighExam.getText());
+        sSubject = (String) cbSubjects.getSelectedItem();
+        iSubjectId = mSubjectIdByName(sSubject);
+        iTerm = Integer.parseInt(cbTerm.getSelectedItem().toString());
+        dTotalTest = Double.parseDouble(txtTest.getText());
+        dWeighTest = Double.parseDouble(txtWeighTest.getText());
+        dTotalExam = Double.parseDouble(txtExams.getText());
+        dWeighExam = Double.parseDouble(txtWeighExam.getText());
         
-        // Calculate the final average mark based on weights
-        // Example: (Test/100) * weight + (Exam/100) * weight
-         averageMark = ((double) dblTotalTest / 100) * dblWeighTest
-                   + ((double) dblTotalExam / 100) * dblWeighExam;
+        // Calculate the final dAverage mark based on weights
+        // (Test/100) * weight + (Exam/100) * weight
+         dAverageMark = ((double) dTotalTest / 100) * dWeighTest
+                   + ((double) dTotalExam / 100) * dWeighExam;
          
     
         
@@ -113,29 +113,29 @@ public class studentResultFrame extends javax.swing.JFrame {
       private void mCheckIfItemsExistInTable(){
          //Validation to prevent duplication
          
-        String URL1 = "jdbc:mysql://localhost:3306/gradebook_system"; //Connection string to the database
-        String User1 = "root"; //User name to connect to database
-        String Password1 = "528_hloni"; //User password to connect to database
+        String sURL1 = "jdbc:mysql://localhost:3306/gradebook_system"; //Connection string to the database
+        String sUser1 = "root"; //User name to connect to database
+        String sPassword1 = "528_hloni"; //User password to connect to database
         java.sql.Connection conMySQLConnectionString; //Declares connection string named conMySQLConnectionString,it will contain the driver for the connection string to the database
-        Statement stStatement = null; //Declares statement named stStatement which will contain sql statement
+        Statement stStatement = null; //Declares statement named stStatement which will contain sSelect statement
         ResultSet rs = null; //Declares statement named rs which will contain quiried data from the table
         
         // try catch contains code to run the query against database table
         try {
-            conMySQLConnectionString = DriverManager.getConnection(URL1,User1,Password1); //used to gain access to database
+            conMySQLConnectionString = DriverManager.getConnection(sURL1,sUser1,sPassword1); //used to gain access to database
             stStatement = conMySQLConnectionString.createStatement();//This will instruct stStatement to execute SQL statement against the table in database
            
-            String strQuery = "SELECT * FROM marks WHERE student_id = '" + intStudentId +
-        "' AND subject_id = '" + intSubjectId + 
-        "' AND term = '" + intTerm +
-        "' AND test_total = '" + dblTotalTest + 
-        "' AND exam_total = '" + dblTotalExam +
-        "' AND test_weight = '" + dblWeighTest +  
-        "' AND exam_weight = '" + dblWeighExam +          
-        "' AND average_mark = '" + averageMark + "'";
-            stStatement.execute(strQuery); // Execute sql statements against the database table
+            String sQuery = "SELECT * FROM marks WHERE student_id = '" + iStudentId +
+        "' AND subject_id = '" + iSubjectId + 
+        "' AND term = '" + iTerm +
+        "' AND test_total = '" + dTotalTest + 
+        "' AND exam_total = '" + dTotalExam +
+        "' AND test_weight = '" + dWeighTest +  
+        "' AND exam_weight = '" + dWeighExam +          
+        "' AND average_mark = '" + dAverageMark + "'";
+            stStatement.execute(sQuery); // Execute sSelect statements against the database table
             rs=stStatement.getResultSet();
-            boolRecordExists=rs.next(); //Confirm if the record exist or not in the database
+            bRecordExists=rs.next(); //Confirm if the record exist or not in the database
             
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, e);
@@ -153,16 +153,16 @@ public class studentResultFrame extends javax.swing.JFrame {
               //Creating new marks
     {
         java.sql.Connection conMySQLConnectionString ; //Declares connection string named conMySQLConnectionString, it will contain the driver for the connection string to the database
-        String URL2 = "jdbc:mysql://localhost:3306/gradebook_system"; //Connection string to the database
-        String User2 = "root"; //User name to connect to database
-        String Password2 = "528_hloni"; //User password to connect to database
+        String sURL2 = "jdbc:mysql://localhost:3306/gradebook_system"; //Connection string to the database
+        String sUser2 = "root"; //User name to connect to database
+        String sPassword2 = "528_hloni"; //User password to connect to database
         try {
-            conMySQLConnectionString = DriverManager.getConnection(URL2,User2,Password2); //used to gain access to database
+            conMySQLConnectionString = DriverManager.getConnection(sURL2,sUser2,sPassword2); //used to gain access to database
             Statement myStatement = conMySQLConnectionString.createStatement(); 
-           String sqlinsert = "insert into marks (student_id,subject_id,term,test_total,exam_total,test_weight,exam_weight,average_mark) " + //Initialises the 'insert sql statement' to store the values inserted in the textfield
-            "values ('" + intStudentId + "','"+ intSubjectId + "','" + intTerm + "','" + dblTotalTest +"','"+ dblTotalExam +"','" + dblWeighTest + "','"+dblWeighExam +"','" +averageMark + "')";
+           String sInsert = "insert into marks (student_id,subject_id,term,test_total,exam_total,test_weight,exam_weight,average_mark) " + //Initialises the 'insert sSelect statement' to store the values inserted in the textfield
+            "values ('" + iStudentId + "','"+ iSubjectId + "','" + iTerm + "','" + dTotalTest +"','"+ dTotalExam +"','" + dWeighTest + "','"+dWeighExam +"','" +dAverageMark + "')";
         
-            myStatement.executeUpdate(sqlinsert); // Execute sql statements against the database table
+            myStatement.executeUpdate(sInsert); // Execute sSelect statements against the database table
             myStatement.close(); //Close connection of the database
             JOptionPane.showMessageDialog(null,"Complete");
         } catch (Exception e) {
@@ -174,13 +174,13 @@ public class studentResultFrame extends javax.swing.JFrame {
     
        private void mTableView(){
          //Viewing table
-      String URL5 = "jdbc:mysql://localhost:3306/gradebook_system"; //Declares connection string named conMySQLConnectionString, it will contain the driver for the connection string to the database
-    String User5 = "root"; //User name to connect to database
-    String Password5 = "528_hloni";  //User password to connect to database
+      String sURL5 = "jdbc:mysql://localhost:3306/gradebook_system"; //Declares connection string named conMySQLConnectionString, it will contain the driver for the connection string to the database
+    String sUser5 = "root"; //User name to connect to database
+    String sPassword5 = "528_hloni";  //User password to connect to database
      java.sql.Connection conMySQLConnectionString ; //Declares connection string named conMySQLConnectionString, it will contain the driver for the connection string to the database
 
     try{
-        conMySQLConnectionString = DriverManager.getConnection(URL5,User5,Password5); //used to gain access to database
+        conMySQLConnectionString = DriverManager.getConnection(sURL5,sUser5,sPassword5); //used to gain access to database
         
          // SQL query:
         // - Gets subject names
@@ -201,7 +201,7 @@ public class studentResultFrame extends javax.swing.JFrame {
 
         // Prepare the SQL statement with a placeholder for student_id
         PreparedStatement pst = conMySQLConnectionString.prepareStatement(sql);
-        pst.setInt(1, intStudentId); // Set the student ID to filter the marks
+        pst.setInt(1, iStudentId); // Set the student ID to filter the marks
         
          // Execute the query
         ResultSet rs = pst.executeQuery();
@@ -236,42 +236,42 @@ public class studentResultFrame extends javax.swing.JFrame {
     DefaultTableModel model = (DefaultTableModel) tblResults.getModel();
     
      // Get index of the selected row
-    int selectedIndex = tblResults.getSelectedRow();
+    int iSelectedIndex = tblResults.getSelectedRow();
     
     java.sql.Connection conMySQLConnectionString ; //Declares connection string named conMySQLConnectionString, it will contain the driver for the connection string to the database
-        String URL8 = "jdbc:mysql://localhost:3306/gradebook_system"; //Connection string to the database
-        String User8 = "root"; //User name to connect to database
-        String Password8 = "528_hloni"; //User password to connect to database
+        String sURL8 = "jdbc:mysql://localhost:3306/gradebook_system"; //Connection string to the database
+        String sUser8 = "root"; //User name to connect to database
+        String sPassword8 = "528_hloni"; //User password to connect to database
     
     
     
 // Check if a row in the table is selected
-    if (selectedIndex != -1) {
+    if (iSelectedIndex != -1) {
         try {
             // Get values from the table
-            String subjectName = model.getValueAt(selectedIndex, 0).toString(); // Get Subject Name
-            int term = Integer.parseInt(cbTerm.getSelectedItem().toString()); // Get Term
+            String sSubjectName = model.getValueAt(iSelectedIndex, 0).toString(); // Get Subject Name
+            int iTerm = Integer.parseInt(cbTerm.getSelectedItem().toString()); // Get Term
 
             // Get marks and weights from text fields
-            double testTotal = Double.parseDouble(txtTest.getText());
-            double examTotal = Double.parseDouble(txtExams.getText());
-            double testWeight = Double.parseDouble(txtWeighExam.getText());
-            double examWeight = Double.parseDouble(txtWeighTest.getText());
+            double dTestTotal = Double.parseDouble(txtTest.getText());
+            double dExamTotal = Double.parseDouble(txtExams.getText());
+            double dTestWeight = Double.parseDouble(txtWeighExam.getText());
+            double dExamWeight = Double.parseDouble(txtWeighTest.getText());
 
-            // Calculate average mark
-            double average = (testTotal * (testWeight / 100)) + (examTotal * (examWeight / 100));
+            // Calculate dAverage mark
+            double dAverage = (dTestTotal * (dTestWeight / 100)) + (dExamTotal * (dExamWeight / 100));
 
             // Get student_id (you should have stored it when opening this frame)
-            int studentId = this.intStudentId;
+            int iStudentId = this.iStudentId;
 
             // Get subject_id from subject table using subject name
-            conMySQLConnectionString = DriverManager.getConnection(URL8,User8,Password8); //used to gain access to database
+            conMySQLConnectionString = DriverManager.getConnection(sURL8,sUser8,sPassword8); //used to gain access to database
             PreparedStatement pstSubject = conMySQLConnectionString.prepareStatement("SELECT subject_id FROM subjects WHERE subject_name = ?");
-            pstSubject.setString(1, subjectName);
+            pstSubject.setString(1, sSubjectName);
             ResultSet rs = pstSubject.executeQuery();
 
             if (rs.next()) {
-                int subjectId = rs.getInt("subject_id");
+                int iSubjectId = rs.getInt("subject_id");
 
                 // Update the correct record in marks table
                 PreparedStatement pstUpdate = conMySQLConnectionString.prepareStatement("""
@@ -279,14 +279,14 @@ public class studentResultFrame extends javax.swing.JFrame {
                     SET test_total = ?, exam_total = ?, test_weight = ?, exam_weight = ?, average_mark = ?
                     WHERE student_id = ? AND subject_id = ? AND term = ? """);
 
-                pstUpdate.setDouble(1, testTotal);
-                pstUpdate.setDouble(2, examTotal);
-                pstUpdate.setDouble(3, testWeight);
-                pstUpdate.setDouble(4, examWeight);
-                pstUpdate.setDouble(5, average);
-                pstUpdate.setInt(6, studentId);
-                pstUpdate.setInt(7, subjectId);
-                pstUpdate.setInt(8, term);
+                pstUpdate.setDouble(1, dTestTotal);
+                pstUpdate.setDouble(2, dExamTotal);
+                pstUpdate.setDouble(3, dTestWeight);
+                pstUpdate.setDouble(4, dExamWeight);
+                pstUpdate.setDouble(5, dAverage);
+                pstUpdate.setInt(6, iStudentId);
+                pstUpdate.setInt(7, iSubjectId);
+                pstUpdate.setInt(8, iTerm);
                 
                // Execute the update query
                 int rowsUpdated = pstUpdate.executeUpdate();
@@ -315,45 +315,45 @@ public class studentResultFrame extends javax.swing.JFrame {
            
            public void mDelete() {
     DefaultTableModel model = (DefaultTableModel) tblResults.getModel();
-    int selectedIndex = tblResults.getSelectedRow();
+    int iSelectedIndex = tblResults.getSelectedRow();
 
-    if (selectedIndex != -1) {
+    if (iSelectedIndex != -1) {
         try {
             // Get values from selected row and GUI
-            String subjectName = model.getValueAt(selectedIndex, 0).toString(); // Get subject name from the selected row
-            int term = Integer.parseInt(cbTerm.getSelectedItem().toString()); // Get the selected term from the combo box
+            String sSubjectName = model.getValueAt(iSelectedIndex, 0).toString(); // Get subject name from the selected row
+            int iTerm = Integer.parseInt(cbTerm.getSelectedItem().toString()); // Get the selected iTerm from the combo box
 
             // DB Connection details
             java.sql.Connection conMySQLConnectionString; //Declares connection string named conMySQLConnectionString, it will contain the driver for the connection string to the database
-            String URL = "jdbc:mysql://localhost:3306/gradebook_system";  //Connection string to the database
-            String User = "root"; //User name to connect to database
-            String Password = "528_hloni"; //User password to connect to database
+            String sURL = "jdbc:mysql://localhost:3306/gradebook_system";  //Connection string to the database
+            String sUser = "root"; //User name to connect to database
+            String sPassword = "528_hloni"; //User password to connect to database
 
-            conMySQLConnectionString = DriverManager.getConnection(URL, User, Password); //used to gain access to database
+            conMySQLConnectionString = DriverManager.getConnection(sURL, sUser, sPassword); //used to gain access to database
 
             // Get subject_id using subject_name
             PreparedStatement pstSubject = conMySQLConnectionString.prepareStatement(
                 "SELECT subject_id FROM subjects WHERE subject_name = ?"
             );
-            pstSubject.setString(1, subjectName);
+            pstSubject.setString(1, sSubjectName);
             ResultSet rs = pstSubject.executeQuery();
 
              // If subject exists in database, proceed with deletion
             if (rs.next()) {
-                int subjectId = rs.getInt("subject_id");
+                int iSubjectId = rs.getInt("subject_id");
 
                 // Delete record from marks table
                 PreparedStatement pstDelete = conMySQLConnectionString.prepareStatement(
                     "DELETE FROM marks WHERE student_id = ? AND subject_id = ? AND term = ?"
                 );
-                pstDelete.setInt(1, this.intStudentId);
-                pstDelete.setInt(2, subjectId);
-                pstDelete.setInt(3, term);
+                pstDelete.setInt(1, this.iStudentId);
+                pstDelete.setInt(2, iSubjectId);
+                pstDelete.setInt(3, iTerm);
 
                 // Execute delete query
-                int rowsDeleted = pstDelete.executeUpdate();
+                int iRowsDeleted = pstDelete.executeUpdate();
 
-                if (rowsDeleted > 0) {
+                if (iRowsDeleted > 0) {
                     JOptionPane.showMessageDialog(this, "Mark deleted successfully.");
                 } else {
                     JOptionPane.showMessageDialog(this, "No matching record found to delete.");
@@ -375,35 +375,35 @@ public class studentResultFrame extends javax.swing.JFrame {
           
 
            
-           private int mSubjectIdByName(String strSubject) {
-     intSubjectId = -1; // Default value in case the subject is not found
+           private int mSubjectIdByName(String sSubject) {
+     iSubjectId = -1; // Default value in case the subject is not found
 
-    String URL9 = "jdbc:mysql://localhost:3306/gradebook_system"; //Connection string to the database
-    String User9 = "root"; //User name to connect to database
-    String Password9 = "528_hloni"; //User password to connect to database
-    String sql = "SELECT subject_id FROM subjects WHERE subject_name = ?"; 
+    String sURL9 = "jdbc:mysql://localhost:3306/gradebook_system"; //Connection string to the database
+    String sUser9 = "root"; //User name to connect to database
+    String sPassword9 = "528_hloni"; //User password to connect to database
+    String sSelect = "SELECT subject_id FROM subjects WHERE subject_name = ?"; 
     
 
     try (
-        java.sql.Connection conMySQLConnectionString = DriverManager.getConnection(URL9, User9, Password9);
-        PreparedStatement pst = conMySQLConnectionString.prepareStatement(sql)
+        java.sql.Connection conMySQLConnectionString = DriverManager.getConnection(sURL9, sUser9, sPassword9);
+        PreparedStatement pst = conMySQLConnectionString.prepareStatement(sSelect)
     ) {
-        pst.setString(1, strSubject); //User password to connect to database
+        pst.setString(1, sSubject); //User password to connect to database
         ResultSet rs = pst.executeQuery(); //User password to connect to database
 
         if (rs.next()) {
             //User password to connect to database
-            intSubjectId = rs.getInt("subject_id");
+            iSubjectId = rs.getInt("subject_id");
         } else {
             //User password to connect to database
-            JOptionPane.showMessageDialog(null, "Subject '" + strSubject + "' not found in database.");
+            JOptionPane.showMessageDialog(null, "Subject '" + sSubject + "' not found in database.");
         }
 
     } catch (Exception e) {
         JOptionPane.showMessageDialog(null, e);
     }
 //User password to connect to database
-    return intSubjectId;
+    return iSubjectId;
 }
    
     
@@ -741,12 +741,12 @@ public class studentResultFrame extends javax.swing.JFrame {
         
         //if the record exist then show jOptionPane message then set boolean record to false
         //if the record doesnt exist then create passeneger,update the table then clear textfields
-        if(boolRecordExists==true)
+        if(bRecordExists==true)
         {
-        boolRecordExists=false;
+        bRecordExists=false;
         JOptionPane.showMessageDialog(null, "Already exists");
         }
-        else if (boolRecordExists==false)
+        else if (bRecordExists==false)
         {
         mInsert();
         mTableView();
@@ -759,16 +759,16 @@ public class studentResultFrame extends javax.swing.JFrame {
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
         
             
-         int selectedIndex = tblResults.getSelectedRow();
-    if (selectedIndex == -1) { // No row is selected
+         int iSelectedIndex = tblResults.getSelectedRow();
+    if (iSelectedIndex == -1) { // No row is selected
         JOptionPane.showMessageDialog(null, "Please select a row to delete.");
     }else{
       
     //Add confirmation JOptionPane dialog before deleting a record
- int response = JOptionPane.showConfirmDialog(null, "Are You Sure You Want To DELETE this Marks",
+ int iResponse = JOptionPane.showConfirmDialog(null, "Are You Sure You Want To DELETE this Marks",
         "Select An Option",JOptionPane.YES_NO_OPTION,JOptionPane.ERROR_MESSAGE);
         
-       if (response == JOptionPane.YES_OPTION){
+       if (iResponse == JOptionPane.YES_OPTION){
         mGetValuesFromGui();
         mDelete();  
         mTableView();
@@ -784,44 +784,44 @@ public class studentResultFrame extends javax.swing.JFrame {
              //selected row from table will appear on textfields 
     
              
-              int selectedRow = tblResults.getSelectedRow();
-    int selectedColumn = tblResults.getSelectedColumn();
+              int iSelectedRow = tblResults.getSelectedRow();
+    int iSelectedColumn = tblResults.getSelectedColumn();
 
-    if (selectedRow == -1 || selectedColumn == -1) return;
+    if (iSelectedRow == -1 || iSelectedColumn == -1) return;
 
     // Get subject name from first column (column 0)
-    String subjectName = tblResults.getValueAt(selectedRow, 0).toString();
+    String sSubjectName = tblResults.getValueAt(iSelectedRow, 0).toString();
 
-    // Get term number from column index
-    int term = selectedColumn; // term2 = column 2 ⇒ term = 2, etc.
+    // Get Term number from column index
+    int iTerm = iSelectedColumn; // term2 = column 2 ⇒ iTerm = 2, etc.
     
-    if (term < 1 || term > 4) return; // Prevent clicking on the subject column (index 0)
+    if (iTerm < 1 || iTerm > 4) return; // Prevent clicking on the subject column (index 0)
 
     // Set combo boxes
-    cbSubjects.setSelectedItem(subjectName);
-    cbTerm.setSelectedItem(String.valueOf(term));
+    cbSubjects.setSelectedItem(sSubjectName);
+    cbTerm.setSelectedItem(String.valueOf(iTerm));
     
     
-     String URL4 = "jdbc:mysql://localhost:3306/gradebook_system";
-    String User4 = "root";
-    String Password4 = "528_hloni"; // 
+     String sURL4 = "jdbc:mysql://localhost:3306/gradebook_system";
+    String sUser4 = "root";
+    String sPassword4 = "528_hloni"; // 
     PreparedStatement pst;
     java.sql.Connection conMySQLConnectionString ;
- int intSubjectId = mSubjectIdByName(subjectName);
+ int iSubjectId = mSubjectIdByName(sSubjectName);
     
         
 
     // Now fetch from DB
     try {
-       conMySQLConnectionString = DriverManager.getConnection(URL4, User4, Password4);
-    String sql2 =  "SELECT test_total, test_weight, exam_total, exam_weight, average_mark FROM marks " +
+       conMySQLConnectionString = DriverManager.getConnection(sURL4, sUser4, sPassword4);
+    String sSelect =  "SELECT test_total, test_weight, exam_total, exam_weight, average_mark FROM marks " +
         "WHERE subject_Id = ? AND term = ? AND student_Id = ?";
-    pst = conMySQLConnectionString.prepareStatement(sql2);
+    pst = conMySQLConnectionString.prepareStatement(sSelect);
         
   
-        pst.setInt(1, intSubjectId);
-        pst.setInt(2, term);
-        pst.setInt(3, intStudentId); // Replace with actual variable for selected student
+        pst.setInt(1, iSubjectId);
+        pst.setInt(2, iTerm);
+        pst.setInt(3, iStudentId); // Replace with actual variable for selected student
         
         ResultSet rs = pst.executeQuery();
 
@@ -848,8 +848,8 @@ public class studentResultFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_tblResultsMouseClicked
 
     private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
-        int selectedIndex = tblResults.getSelectedRow();
-        if (selectedIndex == -1) { // No row is selected
+        int iSelectedIndex = tblResults.getSelectedRow();
+        if (iSelectedIndex == -1) { // No row is selected
             JOptionPane.showMessageDialog(null, "Please select a row to edit.");
         }else{
 
@@ -857,12 +857,12 @@ public class studentResultFrame extends javax.swing.JFrame {
             mCheckIfItemsExistInTable();
             //if the record exist then show jOptionPane message then set boolean record to false
             //if the record doesnt exist then create passeneger,update the table then clear textfields
-            if(boolRecordExists==true)
+            if(bRecordExists==true)
             {
-                boolRecordExists=false;
+                bRecordExists=false;
                 JOptionPane.showMessageDialog(null, "Already exists");
             }
-            else if (boolRecordExists==false)
+            else if (bRecordExists==false)
             {
                 mEditUpdate();
                 mTableView();

@@ -28,14 +28,14 @@ public class createStudentFrame extends javax.swing.JFrame {
         initComponents();
     }
     
-     Boolean boolRecordExists=false; //boolean will be used to check if record exists
-     Boolean boolSubjectAlreadyLinked = false;  //boolean will be used to check if subject exists
-    String strIdNumber;
-    String strName;
-    String strSurname;
-    String strDOB;
-    String strGender;
-    private List<String> selectedSubjects = new ArrayList<>();
+     Boolean bRecordExists=false; //boolean will be used to check if record exists
+     Boolean bSubjectAlreadyLinked = false;  //boolean will be used to check if subject exists
+    String sIdNumber;
+    String sName;
+    String sSurname;
+    String sDOB;
+    String sGender;
+    private List<String> sSelectedSubjects = new ArrayList<>();
     
     
    
@@ -43,20 +43,20 @@ public class createStudentFrame extends javax.swing.JFrame {
        private void mGetValuesFromGUI(){
         //values from the user
          try {
-          strIdNumber = txtID.getText();
-          strName = txtName.getText();
-          strSurname = txtSurname.getText();
+          sIdNumber = txtID.getText();
+          sName = txtName.getText();
+          sSurname = txtSurname.getText();
           
            SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");//format
-        strDOB= sdf1.format(dcDOB.getDate());
+        sDOB= sdf1.format(dcDOB.getDate());
        
           // Get gender selection from radio buttons
          if (rdoMale.isSelected()) {
-            strGender = "Male";
+            sGender = "Male";
         } else if (rdoFemale.isSelected()) {
-            strGender = "Female";
+            sGender = "Female";
         } else {
-            strGender = ""; // fallback to prevent null
+            sGender = ""; // fallback to prevent null
         }
         
          } catch (Exception e) {
@@ -73,9 +73,9 @@ public class createStudentFrame extends javax.swing.JFrame {
         private void mSetvaluesToUpperCase(){
         //values will be uppercase
         
-        strName = strName.toUpperCase();
-        strSurname = strSurname.toUpperCase();
-        strGender = strGender.toUpperCase();
+        sName = sName.toUpperCase();
+        sSurname = sSurname.toUpperCase();
+        sGender = sGender.toUpperCase();
         
        
         }
@@ -83,29 +83,29 @@ public class createStudentFrame extends javax.swing.JFrame {
         private void mLoadListItem() {
          //Loading items from table to JList
          
-         String URL5 = "jdbc:mysql://localhost:3306/gradebook_system"; //Connection string to the database
-        String User5 = "root"; //User name to connect to database
-        String Password5 = "528_hloni"; //User password to connect to database
+         String sURL5 = "jdbc:mysql://localhost:3306/gradebook_system"; //Connection string to the database
+        String sUser5 = "root"; //User name to connect to database
+        String sPassword5 = "528_hloni"; //User password to connect to database
         java.sql.Connection conMySQLConnectionString; //Declares connection string named conMySQLConnectionString,it will contain the driver for the connection string to the database
         Statement stStatement = null; //Declares statement named stStatement which will contain sql statement
         ResultSet rs = null; //Declares statement named rs which will contain quiried data from the table
          
         try{
-        conMySQLConnectionString = DriverManager.getConnection(URL5,User5,Password5); //used to gain access to database
+        conMySQLConnectionString = DriverManager.getConnection(sURL5,sUser5,sPassword5); //used to gain access to database
             stStatement = conMySQLConnectionString.createStatement();//This will instruct stStatement to execute SQL statement against the table in database
-            String strQuery = "SELECT subject_name FROM subjects";
+            String sQuery = "SELECT subject_name FROM subjects";
           
-            stStatement.execute(strQuery);
+            stStatement.execute(sQuery);
          rs=stStatement.getResultSet();
          
-          // Create model and load subject names
-        DefaultListModel<String> model = new DefaultListModel<>();
+          // Create sModel and load subject names
+        DefaultListModel<String> sModel = new DefaultListModel<>();
 
         while (rs.next()) {
-            model.addElement(rs.getString("subject_name")); //  For JList
+            sModel.addElement(rs.getString("subject_name")); //  For JList
         }
 
-        lstSubjects.setModel(model);  //  Correct for JList
+        lstSubjects.setModel(sModel);  //  Correct for JList
         
       
 
@@ -120,27 +120,27 @@ public class createStudentFrame extends javax.swing.JFrame {
          private void mCheckIfItemsExistInTable(){
          //Validation to prevent duplication
          
-        String URL1 = "jdbc:mysql://localhost:3306/gradebook_system"; //Connection string to the database
-        String User1 = "root"; //User name to connect to database
-        String Password1 = "528_hloni"; //User password to connect to database
+        String sURL1 = "jdbc:mysql://localhost:3306/gradebook_system"; //Connection string to the database
+        String sUser1 = "root"; //User name to connect to database
+        String sPassword1 = "528_hloni"; //User password to connect to database
         java.sql.Connection conMySQLConnectionString; //Declares connection string named conMySQLConnectionString,it will contain the driver for the connection string to the database
         Statement stStatement = null; //Declares statement named stStatement which will contain sql statement
         ResultSet rs = null; //Declares statement named rs which will contain quiried data from the table
         
         // try catch contains code to run the query against database table
         try {
-            conMySQLConnectionString = DriverManager.getConnection(URL1,User1,Password1); //used to gain access to database
+            conMySQLConnectionString = DriverManager.getConnection(sURL1,sUser1,sPassword1); //used to gain access to database
             stStatement = conMySQLConnectionString.createStatement();//This will instruct stStatement to execute SQL statement against the table in database
            
-            String strQuery = "SELECT * FROM students WHERE id_number = '" + strIdNumber +
-        "' AND name = '" + strName + 
-        "' AND surname = '" + strSurname +
-        "' AND gender = '" + strGender + 
-        "' AND date_of_birth = '" + strDOB + "'";
+            String sQuery = "SELECT * FROM students WHERE id_number = '" + sIdNumber +
+        "' AND name = '" + sName + 
+        "' AND surname = '" + sSurname +
+        "' AND gender = '" + sGender + 
+        "' AND date_of_birth = '" + sDOB + "'";
             
-            stStatement.execute(strQuery); // Execute sql statements against the database table
+            stStatement.execute(sQuery); // Execute sql statements against the database table
             rs=stStatement.getResultSet();
-            boolRecordExists=rs.next(); //Confirm if the record exist or not in the database
+            bRecordExists=rs.next(); //Confirm if the record exist or not in the database
             
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, e);
@@ -157,23 +157,23 @@ public class createStudentFrame extends javax.swing.JFrame {
          private void mCheckIfSubjectAlreadyLinked(int studentId, int subjectId) {
     // Validation to prevent duplication
 
-    String URL = "jdbc:mysql://localhost:3306/gradebook_system"; //Connection string to the database
-    String User = "root"; //User name to connect to database
-    String Password = "528_hloni"; //User password to connect to database
+    String sURL = "jdbc:mysql://localhost:3306/gradebook_system"; //Connection string to the database
+    String sUser = "root"; //User name to connect to database
+    String sPassword = "528_hloni"; //User password to connect to database
     java.sql.Connection conMySQLConnectionString; //Declares connection string named conMySQLConnectionString,it will contain the driver for the connection string to the database
     Statement stStatement = null; //Declares statement named stStatement which will contain sql statement
     ResultSet rs = null; //Declares statement named rs which will contain quiried data from the table
 
     try {
-        conMySQLConnectionString = DriverManager.getConnection(URL, User, Password);  //Used to gain access to database
+        conMySQLConnectionString = DriverManager.getConnection(sURL, sUser, sPassword);  //Used to gain access to database
         stStatement = conMySQLConnectionString.createStatement(); //This will instruct stStatement to execute SQL statement against the table in database
 
-        String strQuery = "SELECT * FROM student_subjects WHERE student_id = " + studentId +
+        String sQuery = "SELECT * FROM student_subjects WHERE student_id = " + studentId +
                           " AND subject_id = " + subjectId;
 
-        stStatement.execute(strQuery); // Execute sql statements against the database table
+        stStatement.execute(sQuery); // Execute sql statements against the database table
         rs = stStatement.getResultSet();
-        boolSubjectAlreadyLinked = rs.next(); // TRUE if subject already exists
+        bSubjectAlreadyLinked = rs.next(); // TRUE if subject already exists
 
     } catch (Exception e) {
         JOptionPane.showMessageDialog(null, e);
@@ -190,16 +190,16 @@ public class createStudentFrame extends javax.swing.JFrame {
                 //Create a new student
     
         java.sql.Connection conMySQLConnectionString ; //Declares connection string named conMySQLConnectionString, it will contain the driver for the connection string to the database
-        String URL2 = "jdbc:mysql://localhost:3306/gradebook_system"; //Connection string to the database
-        String User2 = "root"; //User name to connect to database
-        String Password2 = "528_hloni"; //User password to connect to database
+        String sURL2 = "jdbc:mysql://localhost:3306/gradebook_system"; //Connection string to the database
+        String sUser2 = "root"; //User name to connect to database
+        String sPassword2 = "528_hloni"; //User password to connect to database
         try {
-            conMySQLConnectionString = DriverManager.getConnection(URL2,User2,Password2); //used to gain access to database
+            conMySQLConnectionString = DriverManager.getConnection(sURL2,sUser2,sPassword2); //used to gain access to database
             Statement myStatement = conMySQLConnectionString.createStatement(); 
-            strDOB = strDOB.replace("\"", ""); 
-            String sqlinsert = "insert into students (id_number,name,surname,gender,date_of_birth) " + //Initialises the 'insert sql statement' to store the values inserted in the textfield
-            "values ('" + strIdNumber + "','"+ strName+"','"+ strSurname + "','"+ strGender +"','"+strDOB+"')";
-            myStatement.executeUpdate(sqlinsert); // Execute sql statements against the database table
+            sDOB = sDOB.replace("\"", ""); 
+            String sInsert = "insert into students (id_number,name,surname,gender,date_of_birth) " + //Initialises the 'insert sql statement' to store the values inserted in the textfield
+            "values ('" + sIdNumber + "','"+ sName+"','"+ sSurname + "','"+ sGender +"','"+sDOB+"')";
+            myStatement.executeUpdate(sInsert); // Execute sql statements against the database table
             myStatement.close(); //Close connection of the database
             JOptionPane.showMessageDialog(null,"Complete");
         } catch (Exception e) {
@@ -213,17 +213,17 @@ public class createStudentFrame extends javax.swing.JFrame {
               // Create Subjects  
     
         java.sql.Connection conMySQLConnectionString ; //Declares connection string named conMySQLConnectionString, it will contain the driver for the connection string to the database
-        String URL7 = "jdbc:mysql://localhost:3306/gradebook_system"; //Connection string to the database
-        String User7 = "root"; //User name to connect to database
-        String Password7 = "528_hloni"; //User password to connect to database
+        String sURL7 = "jdbc:mysql://localhost:3306/gradebook_system"; //Connection string to the database
+        String sUser7 = "root"; //User name to connect to database
+        String sPassword7 = "528_hloni"; //User password to connect to database
         try {
-            conMySQLConnectionString = DriverManager.getConnection(URL7,User7,Password7); //used to gain access to database
+            conMySQLConnectionString = DriverManager.getConnection(sURL7,sUser7,sPassword7); //used to gain access to database
            
 
         //  Get student_id using the ID number
-        String getStudentIdQuery = "SELECT student_id FROM students WHERE id_number = ?";
-        PreparedStatement pstStudent = conMySQLConnectionString.prepareStatement(getStudentIdQuery);
-        pstStudent.setString(1, strIdNumber); // Assuming you've already collected intIdNumber from GUI
+        String sGetStudentIdQuery = "SELECT student_id FROM students WHERE id_number = ?";
+        PreparedStatement pstStudent = conMySQLConnectionString.prepareStatement(sGetStudentIdQuery);
+        pstStudent.setString(1, sIdNumber); // Assuming you've already collected intIdNumber from GUI
         ResultSet rsStudent = pstStudent.executeQuery();
 
         if (!rsStudent.next()) {
@@ -231,29 +231,29 @@ public class createStudentFrame extends javax.swing.JFrame {
             return;
         }
 
-        int studentId = rsStudent.getInt("student_id");
+        int iStudentId = rsStudent.getInt("student_id");
 
         //  Prepare statements
-        String getSubjectIdQuery = "SELECT subject_id FROM subjects WHERE subject_name = ?";
-        PreparedStatement pstSubject = conMySQLConnectionString.prepareStatement(getSubjectIdQuery);
+        String sGetSubjectIdQuery = "SELECT subject_id FROM subjects WHERE subject_name = ?";
+        PreparedStatement pstSubject = conMySQLConnectionString.prepareStatement(sGetSubjectIdQuery);
 
-        String insertLinkQuery = "INSERT INTO student_subjects (student_id, subject_id) VALUES (?, ?)";
-        PreparedStatement pstInsert = conMySQLConnectionString.prepareStatement(insertLinkQuery);
+        String sInsertLinkQuery = "INSERT INTO student_subjects (student_id, subject_id) VALUES (?, ?)";
+        PreparedStatement pstInsert = conMySQLConnectionString.prepareStatement(sInsertLinkQuery);
 
         // Loop through selected subjects from JList
-        for (String subjectName : selectedSubjects) {
+        for (String sSubjectName : sSelectedSubjects) {
             // Lookup subject_id
-            pstSubject.setString(1, subjectName);
+            pstSubject.setString(1, sSubjectName);
             ResultSet rsSubject = pstSubject.executeQuery();
 
             if (rsSubject.next()) {
-                int subjectId = rsSubject.getInt("subject_id");
+                int iSubjectId = rsSubject.getInt("subject_id");
 
                 //Check if already linked before inserting
-                 mCheckIfSubjectAlreadyLinked(studentId, subjectId);
-        if (!boolSubjectAlreadyLinked) {
-                pstInsert.setInt(1, studentId);
-                pstInsert.setInt(2, subjectId);
+                 mCheckIfSubjectAlreadyLinked(iStudentId, iSubjectId);
+        if (!bSubjectAlreadyLinked) {
+                pstInsert.setInt(1, iStudentId);
+                pstInsert.setInt(2, iSubjectId);
                 pstInsert.executeUpdate();
         }
             }
@@ -268,11 +268,11 @@ public class createStudentFrame extends javax.swing.JFrame {
 }
               
               private void mLoadSelectedSubjectsFromJList() {
-          // Method to load the selected subjects from the JList into the selectedSubjects list
+          // Method to load the selected subjects from the JList into the sSelectedSubjects list
           
-    selectedSubjects.clear(); //  clear before loading new selection
+    sSelectedSubjects.clear(); //  clear before loading new selection
     for (Object subject : lstSubjects.getSelectedValuesList()) {   // Loop through each selected item in the JList
-        selectedSubjects.add(subject.toString());// Convert each selected object to a String and add it to the selectedSubjects list
+        sSelectedSubjects.add(subject.toString());// Convert each selected object to a String and add it to the sSelectedSubjects list
     }
 }
         
@@ -549,7 +549,7 @@ public class createStudentFrame extends javax.swing.JFrame {
         }
         
          
-        else if(selectedSubjects.isEmpty())
+        else if(sSelectedSubjects.isEmpty())
         {
          JOptionPane.showMessageDialog(this,"Please select at least one subject");
        }
@@ -563,12 +563,12 @@ public class createStudentFrame extends javax.swing.JFrame {
         
         //if the record exist then show jOptionPane message then set boolean record to false
         //if the record doesnt exist then create passeneger,update the table then clear textfields
-        if(boolRecordExists==true)
+        if(bRecordExists==true)
         {
-        boolRecordExists=false;
+        bRecordExists=false;
         JOptionPane.showMessageDialog(null, "Student already exists");
         }
-        else if (boolRecordExists==false)
+        else if (bRecordExists==false)
         {
         mCreateStudent();  //Create Student
         mCreateStudentSubjects();  //Link Subjects
