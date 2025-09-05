@@ -183,12 +183,11 @@ public class studentResultFrame extends javax.swing.JFrame {
         conMySQLConnectionString = DriverManager.getConnection(sURL5,sUser5,sPassword5); //used to gain access to database
         
          // SQL query:
-        // - Gets subject names
-        // - Uses conditional aggregation to get marks for Term 1 to Term 4 per subject
-        // - Groups results by subject name
+        //  Gets subject names
+        // Uses conditional aggregation to get marks for Term 1 to Term 4 per subject
+        // Groups results by subject name
         String sql = """
-            SELECT 
-                sub.subject_name,
+            SELECT sub.subject_name,
                 MAX(CASE WHEN m.term = 1 THEN m.average_mark ELSE NULL END) AS term1,
                 MAX(CASE WHEN m.term = 2 THEN m.average_mark ELSE NULL END) AS term2,
                 MAX(CASE WHEN m.term = 3 THEN m.average_mark ELSE NULL END) AS term3,
@@ -424,6 +423,125 @@ public class studentResultFrame extends javax.swing.JFrame {
        
         
     }
+    
+    
+   private void mPrintReport() {
+    String sURL = "jdbc:mysql://localhost:3306/gradebook_system";
+    String sUser = "root";
+    String sPassword = "528_hloni";
+    java.sql.Connection conMySQLConnectionString;
+    
+    try {
+        conMySQLConnectionString = DriverManager.getConnection(sURL, sUser, sPassword);
+        
+        // SQL query to get all marks for the student
+        String sql = """
+            SELECT sub.subject_name,
+                MAX(CASE WHEN m.term = 1 THEN m.average_mark ELSE NULL END) AS term1,
+                MAX(CASE WHEN m.term = 2 THEN m.average_mark ELSE NULL END) AS term2,
+                MAX(CASE WHEN m.term = 3 THEN m.average_mark ELSE NULL END) AS term3,
+                MAX(CASE WHEN m.term = 4 THEN m.average_mark ELSE NULL END) AS term4
+            FROM marks m
+            JOIN subjects sub ON m.subject_id = sub.subject_id
+            WHERE m.student_id = ?
+            GROUP BY sub.subject_name
+            ORDER BY sub.subject_name
+        """;
+        
+        PreparedStatement pst = conMySQLConnectionString.prepareStatement(sql);
+        pst.setInt(1, iStudentId);
+        ResultSet rs = pst.executeQuery();
+        
+        // Create filename with student name
+        String sFileName = sName + "_" + sSurname + "_Academic_Report.txt";
+        
+        // Use FileWriter to create the text file
+        java.io.FileWriter fileWriter = new java.io.FileWriter(sFileName);
+        java.io.PrintWriter printWriter = new java.io.PrintWriter(fileWriter);
+        
+        // Write report header
+        printWriter.println("===============================================");
+        printWriter.println("           GRADE 12 REPEAT CENTER");
+        printWriter.println("              STUDENT REPORT");
+        printWriter.println("===============================================");
+        printWriter.println();
+        printWriter.println("Student Name: " + sName + " " + sSurname);
+        printWriter.println("Student ID: " + iStudentId);
+        printWriter.println("Report Generated: " + java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")));
+        printWriter.println();
+        printWriter.println("===============================================");
+        printWriter.println("                ACADEMIC RESULTS");
+        printWriter.println("===============================================");
+        printWriter.println();
+        
+        // Format for subject results
+        printWriter.printf("%-20s %-10s %-10s %-10s %-10s%n", "SUBJECT", "TERM 1", "TERM 2", "TERM 3", "TERM 4");
+        printWriter.println("------------------------------------------------------------");
+        
+        boolean bHasData = false;
+        
+        // Write subject marks
+        while (rs.next()) {
+            bHasData = true;
+            String subjectName = rs.getString("subject_name");
+            Object term1 = rs.getObject("term1");
+            Object term2 = rs.getObject("term2");
+            Object term3 = rs.getObject("term3");
+            Object term4 = rs.getObject("term4");
+            
+            // Format marks with pass/fail indication
+            String sTerm1Str = formatMark(term1);
+            String sTerm2Str = formatMark(term2);
+            String sTerm3Str = formatMark(term3);
+            String sTerm4Str = formatMark(term4);
+            
+            printWriter.printf("%-20s %-10s %-10s %-10s %-10s%n", 
+                subjectName, sTerm1Str, sTerm2Str, sTerm3Str, sTerm4Str);
+        }
+        
+        if (!bHasData) {
+            printWriter.println("No academic records found for this student.");
+        }
+        
+        printWriter.println();
+        printWriter.println("===============================================");
+        printWriter.println("Please Note Pass Mark: 30%");
+        printWriter.println("Report End");
+        printWriter.println("===============================================");
+        
+        // Close file writers
+        printWriter.close();
+        fileWriter.close();
+        
+        JOptionPane.showMessageDialog(this, 
+            "Academic report has been generated successfully!\n" +
+            "File saved as: " + sFileName + "\n" +
+            "Location: " + System.getProperty("user.dir"), 
+            "Report Generated", 
+            JOptionPane.INFORMATION_MESSAGE);
+        
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, 
+            "Error generating report: " + e.getMessage(), 
+            "Error", 
+            JOptionPane.ERROR_MESSAGE);
+        e.printStackTrace();
+    }
+}
+
+// Helper method to format marks with pass/fail indication
+private String formatMark(Object mark) {
+    if (mark == null) {
+        return "N/A";
+    }
+    
+    double dMarkValue = (Double) mark;
+    String sStatus = dMarkValue >= 30 ? "P" : "F"; // P for Pass, F for Fail (30% pass mark)
+    return String.format("%.1f(%s)", dMarkValue, sStatus);
+}    
+    
+    
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -677,7 +795,7 @@ public class studentResultFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnPrintReportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrintReportActionPerformed
-        // TODO add your handling code here:
+         mPrintReport();
     }//GEN-LAST:event_btnPrintReportActionPerformed
 
     private void btnReturnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReturnActionPerformed
