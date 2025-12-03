@@ -5,24 +5,24 @@ and manage their academic performance(marks) across four terms and print out a a
 
 ##  Features
 
- **Student Registration**
+ **Student Registration** <br>
 -Capture ID number, name, surname, date of birth, gender. <br>
 -Select multiple subjects. <br>
 -Data saved to MySQL.
 
-**Existing Students Module**
+**Existing Students Module** <br>
 -JTable displaying all students. <br>
 -Select a student → click Next → open results form. <br>
 -Auto-display student name & surname at the top.
 
-**Marks Management**
+**Marks Management** <br>
 -Choose subject using a combo box (filtered to only show the student’s subjects). <br>
 -Capture Test Total, Exam Total and assessment weightings. <br>
 -Save, edit or delete marks. <br>
 -View full marks table: <br>
 | Subject | Term 1 | Term 2 | Term 3 | Term 4 |
 
-**Term & Average Calculations**
+**Term & Average Calculations** <br>
 -Weighted test + exam calculations. <br>
 -Average per term.
 
