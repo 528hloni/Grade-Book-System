@@ -26,13 +26,15 @@ and manage their academic performance(marks) across four terms and print out a a
 -Weighted test + exam calculations. <br>
 -Average per term.
 
-##  Technologies Framework
-- Java JDK 8+. <br>
-- MySQL 5.7 or later. <br>
-- NetBeans IDE (optional).  
-
-**Report Generation**
+**Report Generation** <br>
 -Uses Java File Handling <br>
 -Generates a printable high school progress report
+
+##  Technologies Framework
+- Java JDK 8+. 
+- MySQL 5.7 or later. 
+- NetBeans IDE (optional).  
+
+
 
 ##  Screenshots
