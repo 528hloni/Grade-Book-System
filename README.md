@@ -6,33 +6,33 @@ and manage their academic performance(marks) across four terms and print out a a
 ##  Features
 
  **Student Registration**
--Capture ID number, name, surname, date of birth, gender.
--Select multiple subjects.
+-Capture ID number, name, surname, date of birth, gender. <br>
+-Select multiple subjects. <br>
 -Data saved to MySQL.
 
 **Existing Students Module**
--JTable displaying all students.
--Select a student → click Next → open results form.
+-JTable displaying all students. <br>
+-Select a student → click Next → open results form. <br>
 -Auto-display student name & surname at the top.
 
 **Marks Management**
--Choose subject using a combo box (filtered to only show the student’s subjects).
--Capture Test Total, Exam Total and assessment weightings.
--Save, edit or delete marks.
--View full marks table:
+-Choose subject using a combo box (filtered to only show the student’s subjects). <br>
+-Capture Test Total, Exam Total and assessment weightings. <br>
+-Save, edit or delete marks. <br>
+-View full marks table: <br>
 | Subject | Term 1 | Term 2 | Term 3 | Term 4 |
 
 **Term & Average Calculations**
--Weighted test + exam calculations.
+-Weighted test + exam calculations. <br>
 -Average per term.
 
 ##  Technologies Framework
-- Java JDK 8+.
-- MySQL 5.7 or later.
-- NetBeans IDE (optional).
-
-##  Screenshots  
+- Java JDK 8+. <br>
+- MySQL 5.7 or later. <br>
+- NetBeans IDE (optional).  
 
 **Report Generation**
--Uses Java File Handling
+-Uses Java File Handling <br>
 -Generates a printable high school progress report
+
+##  Screenshots
