@@ -43,3 +43,11 @@ The system also supports the generation and printing of academic reports, provid
 
 
 ##  Screenshots
+![Home Page](https://github.com/528hloni/Grade-Book-System/blob/main/Images/Home%20Page.png)
+![Create Student](https://github.com/528hloni/Grade-Book-System/blob/main/Images/Create%20Student%20Page.png)
+![Existing Students](https://github.com/528hloni/Grade-Book-System/blob/main/Images/Existing%20Student%20Page.png)
+![Student Results](https://github.com/528hloni/Grade-Book-System/blob/main/Images/Student%20Result%20Page.png)
+![Generated Report](https://github.com/528hloni/Grade-Book-System/blob/main/Images/Generated%20Report.png)
+
+##  Demo
+![Demo](https://github.com/528hloni/Grade-Book-System/blob/main/Images/Demo%20vid.gif)
