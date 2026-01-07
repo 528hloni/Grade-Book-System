@@ -29,7 +29,10 @@ public class existingStudentFrame extends javax.swing.JFrame {
      */
     public existingStudentFrame() {
         initComponents();
+        
     }
+    
+    
     
      Boolean bRecordExists=false; //boolean will be used to check if record exists
    
@@ -278,6 +281,7 @@ public class existingStudentFrame extends javax.swing.JFrame {
         dcDOB = new com.toedter.calendar.JDateChooser();
         rdoMale = new javax.swing.JRadioButton();
         rdoFemale = new javax.swing.JRadioButton();
+        jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -286,6 +290,7 @@ public class existingStudentFrame extends javax.swing.JFrame {
             }
         });
 
+        lblExistingStudent.setFont(new java.awt.Font("Showcard Gothic", 0, 18)); // NOI18N
         lblExistingStudent.setText("Existing Student");
 
         tblStudents.setModel(new javax.swing.table.DefaultTableModel(
@@ -350,12 +355,17 @@ public class existingStudentFrame extends javax.swing.JFrame {
         buttonGroup1.add(rdoFemale);
         rdoFemale.setText("Female");
 
+        jLabel1.setFont(new java.awt.Font("Showcard Gothic", 2, 12)); // NOI18N
+        jLabel1.setText("<html>Note: To edit, delete or go to students results form, click on the specific student row in the table</html>");
+        jLabel1.setMaximumSize(new java.awt.Dimension(506, 200));
+        jLabel1.setPreferredSize(new java.awt.Dimension(150, 16));
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(14, 14, 14)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -379,7 +389,10 @@ public class existingStudentFrame extends javax.swing.JFrame {
                         .addGap(18, 18, 18)
                         .addComponent(rdoMale, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(rdoFemale, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(rdoFemale, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap(17, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
@@ -406,6 +419,8 @@ public class existingStudentFrame extends javax.swing.JFrame {
                     .addComponent(lblGender)
                     .addComponent(rdoMale)
                     .addComponent(rdoFemale))
+                .addGap(37, 37, 37)
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -415,9 +430,6 @@ public class existingStudentFrame extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(434, 434, 434)
-                        .addComponent(lblExistingStudent, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(144, 144, 144)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -430,10 +442,13 @@ public class existingStudentFrame extends javax.swing.JFrame {
                         .addComponent(btnReturn))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(58, 58, 58)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 702, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(77, 77, 77)
-                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(82, Short.MAX_VALUE))
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 752, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(27, 27, 27)
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(425, 425, 425)
+                        .addComponent(lblExistingStudent, javax.swing.GroupLayout.PREFERRED_SIZE, 206, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(307, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -489,6 +504,7 @@ public class existingStudentFrame extends javax.swing.JFrame {
              studentResultFrame frmStudentResult = new studentResultFrame(iStudentId, sName,sSurname);
        frmStudentResult.setVisible(true);
        this.setVisible(false);
+        frmStudentResult.setLocationRelativeTo(null);
         }
         
         
@@ -503,6 +519,7 @@ public class existingStudentFrame extends javax.swing.JFrame {
          mainFrame frmMain = new mainFrame();
        frmMain.setVisible(true);
        this.setVisible(false);
+        frmMain.setLocationRelativeTo(null);
     }//GEN-LAST:event_btnReturnActionPerformed
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
@@ -632,6 +649,7 @@ public class existingStudentFrame extends javax.swing.JFrame {
     private javax.swing.JButton btnReturn;
     private javax.swing.ButtonGroup buttonGroup1;
     private com.toedter.calendar.JDateChooser dcDOB;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;

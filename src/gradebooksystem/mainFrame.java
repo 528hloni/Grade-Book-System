@@ -34,11 +34,14 @@ public class mainFrame extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        lbl1.setText("Grade 12 Repeat Center");
+        lbl1.setFont(new java.awt.Font("Showcard Gothic", 0, 14)); // NOI18N
+        lbl1.setText("Grade 12 Learners");
         lbl1.setName("lbl1"); // NOI18N
 
+        lbl2.setFont(new java.awt.Font("Niagara Engraved", 0, 36)); // NOI18N
         lbl2.setText("Grade Book System");
 
+        btnCreateStudent.setFont(new java.awt.Font("Segoe UI", 2, 18)); // NOI18N
         btnCreateStudent.setText("Create Student");
         btnCreateStudent.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -46,6 +49,7 @@ public class mainFrame extends javax.swing.JFrame {
             }
         });
 
+        btnExistingStudent.setFont(new java.awt.Font("Segoe UI", 2, 18)); // NOI18N
         btnExistingStudent.setText("Existing Student");
         btnExistingStudent.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -62,28 +66,28 @@ public class mainFrame extends javax.swing.JFrame {
                 .addComponent(lbl1, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(37, 37, 37))
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(370, 370, 370)
-                .addComponent(lbl2)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(130, 130, 130)
-                .addComponent(btnCreateStudent)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 444, Short.MAX_VALUE)
-                .addComponent(btnExistingStudent)
-                .addGap(140, 140, 140))
+                .addComponent(btnCreateStudent, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 362, Short.MAX_VALUE)
+                .addComponent(btnExistingStudent, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(125, 125, 125))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(349, 349, 349)
+                .addComponent(lbl2, javax.swing.GroupLayout.PREFERRED_SIZE, 184, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(16, 16, 16)
                 .addComponent(lbl1)
-                .addGap(18, 18, 18)
-                .addComponent(lbl2, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(189, 189, 189)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lbl2)
+                .addGap(193, 193, 193)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnCreateStudent)
-                    .addComponent(btnExistingStudent))
-                .addContainerGap(319, Short.MAX_VALUE))
+                    .addComponent(btnCreateStudent, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnExistingStudent, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(198, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -105,6 +109,7 @@ public class mainFrame extends javax.swing.JFrame {
         createStudentFrame frmCreate = new createStudentFrame();
        frmCreate.setVisible(true);
        this.setVisible(false);
+        frmCreate.setLocationRelativeTo(null);
     }//GEN-LAST:event_btnCreateStudentActionPerformed
 
     private void btnExistingStudentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExistingStudentActionPerformed
@@ -112,6 +117,7 @@ public class mainFrame extends javax.swing.JFrame {
         existingStudentFrame frmExisting = new existingStudentFrame();
        frmExisting.setVisible(true);
        this.setVisible(false);
+        frmExisting.setLocationRelativeTo(null);
     }//GEN-LAST:event_btnExistingStudentActionPerformed
 
     /**

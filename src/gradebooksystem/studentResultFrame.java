@@ -433,14 +433,13 @@ public class studentResultFrame extends javax.swing.JFrame {
     
     try {
         conMySQLConnectionString = DriverManager.getConnection(sURL, sUser, sPassword);
-        
         // SQL query to get all marks for the student
         String sql = """
             SELECT sub.subject_name,
-                MAX(CASE WHEN m.term = 1 THEN m.average_mark ELSE NULL END) AS term1,
-                MAX(CASE WHEN m.term = 2 THEN m.average_mark ELSE NULL END) AS term2,
-                MAX(CASE WHEN m.term = 3 THEN m.average_mark ELSE NULL END) AS term3,
-                MAX(CASE WHEN m.term = 4 THEN m.average_mark ELSE NULL END) AS term4
+            MAX(CASE WHEN m.term = 1 THEN m.average_mark ELSE NULL END) AS term1,
+            MAX(CASE WHEN m.term = 2 THEN m.average_mark ELSE NULL END) AS term2,
+            MAX(CASE WHEN m.term = 3 THEN m.average_mark ELSE NULL END) AS term3,
+            MAX(CASE WHEN m.term = 4 THEN m.average_mark ELSE NULL END) AS term4
             FROM marks m
             JOIN subjects sub ON m.subject_id = sub.subject_id
             WHERE m.student_id = ?
@@ -532,7 +531,7 @@ public class studentResultFrame extends javax.swing.JFrame {
 // Helper method to format marks with pass/fail indication
 private String formatMark(Object mark) {
     if (mark == null) {
-        return "N/A";
+    return "N/A";
     }
     
     double dMarkValue = (Double) mark;
@@ -577,6 +576,7 @@ private String formatMark(Object mark) {
         btnMainMenu = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         txtAverage = new javax.swing.JTextArea();
+        jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -585,6 +585,7 @@ private String formatMark(Object mark) {
             }
         });
 
+        lbllearner.setFont(new java.awt.Font("Showcard Gothic", 0, 18)); // NOI18N
         lbllearner.setText("Learner name & surname");
 
         lblSubject.setText("Subject :");
@@ -673,6 +674,9 @@ private String formatMark(Object mark) {
         txtAverage.setRows(5);
         jScrollPane2.setViewportView(txtAverage);
 
+        jLabel1.setFont(new java.awt.Font("Showcard Gothic", 2, 12)); // NOI18N
+        jLabel1.setText("<html>Note: To edit term mark, click on specific term column</html>");
+
         javax.swing.GroupLayout SubjectLayout = new javax.swing.GroupLayout(Subject);
         Subject.setLayout(SubjectLayout);
         SubjectLayout.setHorizontalGroup(
@@ -680,6 +684,40 @@ private String formatMark(Object mark) {
             .addGroup(SubjectLayout.createSequentialGroup()
                 .addGap(63, 63, 63)
                 .addGroup(SubjectLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(SubjectLayout.createSequentialGroup()
+                        .addGroup(SubjectLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(lblSubject, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblExams, javax.swing.GroupLayout.DEFAULT_SIZE, 85, Short.MAX_VALUE)
+                            .addComponent(lblTest, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGroup(SubjectLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(SubjectLayout.createSequentialGroup()
+                                .addGap(35, 35, 35)
+                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(SubjectLayout.createSequentialGroup()
+                                .addGroup(SubjectLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(SubjectLayout.createSequentialGroup()
+                                        .addGap(11, 11, 11)
+                                        .addComponent(cbSubjects, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(SubjectLayout.createSequentialGroup()
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addGroup(SubjectLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(txtExams, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(txtTest, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                .addGap(104, 104, 104)
+                                .addGroup(SubjectLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                    .addGroup(SubjectLayout.createSequentialGroup()
+                                        .addGroup(SubjectLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(lblWeighs1, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(lblWeighs2, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addGroup(SubjectLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(txtWeighExam, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(txtWeighTest, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                    .addGroup(SubjectLayout.createSequentialGroup()
+                                        .addComponent(lblTerm, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(36, 36, 36)
+                                        .addComponent(cbTerm, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 81, Short.MAX_VALUE))
                     .addGroup(SubjectLayout.createSequentialGroup()
                         .addGroup(SubjectLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(btnClear)
@@ -693,42 +731,18 @@ private String formatMark(Object mark) {
                         .addGroup(SubjectLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(btnDelete)
                             .addComponent(btnReturn))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(45, 45, 45)))
+                .addGroup(SubjectLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(SubjectLayout.createSequentialGroup()
-                        .addGroup(SubjectLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(lblSubject, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lblExams, javax.swing.GroupLayout.DEFAULT_SIZE, 85, Short.MAX_VALUE)
-                            .addComponent(lblTest, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(34, 34, 34)
-                        .addGroup(SubjectLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(SubjectLayout.createSequentialGroup()
-                                .addGroup(SubjectLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(txtTest, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(cbSubjects, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(txtExams, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(103, 103, 103)
-                                .addGroup(SubjectLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, SubjectLayout.createSequentialGroup()
-                                        .addComponent(lblTerm, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(54, 54, 54)
-                                        .addComponent(cbTerm, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addGroup(SubjectLayout.createSequentialGroup()
-                                        .addGroup(SubjectLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                            .addComponent(lblWeighs2, javax.swing.GroupLayout.DEFAULT_SIZE, 70, Short.MAX_VALUE)
-                                            .addComponent(lblWeighs1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addGroup(SubjectLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(txtWeighTest, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(txtWeighExam, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                            .addGroup(SubjectLayout.createSequentialGroup()
-                                .addGap(1, 1, 1)
-                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 24, Short.MAX_VALUE)))
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 500, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                        .addGap(100, 100, 100)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 301, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(127, 127, 127))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, SubjectLayout.createSequentialGroup()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 500, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(65, 65, 65))))
             .addGroup(SubjectLayout.createSequentialGroup()
-                .addGap(422, 422, 422)
-                .addComponent(lbllearner, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(372, 372, 372)
+                .addComponent(lbllearner, javax.swing.GroupLayout.PREFERRED_SIZE, 321, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         SubjectLayout.setVerticalGroup(
@@ -740,7 +754,7 @@ private String formatMark(Object mark) {
                 .addGroup(SubjectLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(SubjectLayout.createSequentialGroup()
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 45, Short.MAX_VALUE))
                     .addGroup(SubjectLayout.createSequentialGroup()
                         .addGroup(SubjectLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(lblSubject)
@@ -772,23 +786,21 @@ private String formatMark(Object mark) {
                             .addComponent(btnReturn)
                             .addComponent(btnClear))
                         .addGap(46, 46, 46)))
-                .addComponent(btnMainMenu)
-                .addGap(89, 89, 89))
+                .addGroup(SubjectLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btnMainMenu)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(53, 53, 53))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addComponent(Subject, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+            .addComponent(Subject, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addComponent(Subject, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+            .addComponent(Subject, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
@@ -802,6 +814,7 @@ private String formatMark(Object mark) {
          existingStudentFrame frmExisting = new existingStudentFrame();
        frmExisting.setVisible(true);
        this.setVisible(false);
+        frmExisting.setLocationRelativeTo(null);
     }//GEN-LAST:event_btnReturnActionPerformed
 
     private void btnMainMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMainMenuActionPerformed
@@ -809,6 +822,7 @@ private String formatMark(Object mark) {
        mainFrame frmMain = new mainFrame();
        frmMain.setVisible(true);
        this.setVisible(false);
+        frmMain.setLocationRelativeTo(null);
     }//GEN-LAST:event_btnMainMenuActionPerformed
 
     private void btnClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClearActionPerformed
@@ -1035,6 +1049,7 @@ private String formatMark(Object mark) {
     private javax.swing.JButton btnReturn;
     private javax.swing.JComboBox<String> cbSubjects;
     private javax.swing.JComboBox<String> cbTerm;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JLabel lblExams;

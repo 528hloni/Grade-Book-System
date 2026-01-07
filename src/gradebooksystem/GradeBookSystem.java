@@ -16,6 +16,7 @@ public class GradeBookSystem {
     public static void main(String[] args) {
          mainFrame frmM = new mainFrame();
         frmM.setVisible(true);
+         frmM.setLocationRelativeTo(null);
     }
     
 }
