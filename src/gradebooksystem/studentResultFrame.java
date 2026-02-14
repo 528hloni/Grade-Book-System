@@ -4,6 +4,7 @@
  */
 package gradebooksystem;
 
+import com.mysql.cj.conf.PropertyKey;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -93,10 +94,15 @@ public class studentResultFrame extends javax.swing.JFrame {
         dTotalExam = Double.parseDouble(txtExams.getText());
         dWeighExam = Double.parseDouble(txtWeighExam.getText());
         
+        if (dWeighTest + dWeighExam == 100){
         // Calculate the final dAverage mark based on weights
         // (Test/100) * weight + (Exam/100) * weight
          dAverageMark = ((double) dTotalTest / 100) * dWeighTest
                    + ((double) dTotalExam / 100) * dWeighExam;
+        }else{
+            JOptionPane.showMessageDialog(null,"Test Weight and Exam Weight are not Equal to 100!!!");
+            return;
+        }
          
     
         
