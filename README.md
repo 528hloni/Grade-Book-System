@@ -3,8 +3,8 @@
 This is a Java-based Gradebook Management System integrated with a MySQL database, developed for an institution that specializes in Grade 12 upgrading learners.
 The system is designed to support learners who are rewriting matric and can choose specific subjects they want to upgrade rather than following a fixed subject stream.
 
-The application allows administrators and teachers to register new students, assign subjects based on the learner’s upgrade choices and manage academic performance (marks) across four academic terms. 
-Teachers can insert, update, delete and view assessment and exam marks while the system stores all records securely in a relational database.
+The application allows administrators to register new students, assign subjects based on the learner’s upgrade choices and manage academic performance (marks) across four academic terms. 
+Administartors can insert, update, delete and view assessment and exam marks while the system stores all records securely in a relational database.
 
 The system also supports the generation and printing of academic reports, providing a clear overview of learner performance per subject and per term. 
 
